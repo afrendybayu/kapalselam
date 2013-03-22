@@ -52,10 +52,10 @@
 #*/
 
 PENULIS=../../../../../../atinom/modul/Penulis/lpc_dbe
-
-RTOS_SOURCE_DIR=../../../Source
-DEMO_COMMON_DIR=../../Common/Minimal
-DEMO_INCLUDE_DIR=../../Common/include
+NAMA_FILE=RTOSDemo
+RTOS_SOURCE_DIR=source
+DEMO_COMMON_DIR=minimal
+DEMO_INCLUDE_DIR=includ
 UIP_COMMON_DIR=../../Common/ethernet/uIP/uip-1.0/uip
 GCC=../../../../../../atinom/modul/TOOLCHAIN/bin/
 CC=$(GCC)arm-elf-gcc
@@ -63,10 +63,11 @@ CC=$(GCC)arm-elf-gcc
 OBJCOPY=$(GCC)arm-elf-objcopy
 LDSCRIPT=lpc2368.ld
 
-LINKER_FLAGS=-mthumb -nostartfiles -Xlinker -oRTOSDemo.elf -Xlinker -M -Xlinker -Map=rtosdemo.map
+LINKER_FLAGS=-mthumb -nostartfiles -Xlinker -o$(NAMA_FILE).elf -Xlinker -M -Xlinker -Map=rtosdemo.map
 
 DEBUG=-g
-OPTIM=-O0
+OPTIM=-O0		
+#	kalo OPTIM=-O1 --> kedip kecil trus ngehang
 
 
 CFLAGS= $(DEBUG) \
@@ -76,8 +77,6 @@ CFLAGS= $(DEBUG) \
 		-I $(RTOS_SOURCE_DIR)/include \
 		-I $(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx \
 		-I $(DEMO_INCLUDE_DIR) \
-		-I ./webserver \
-		-I $(UIP_COMMON_DIR) \
 		-D ROWLEY_LPC23xx \
 		-D THUMB_INTERWORK \
 		-mcpu=arm7tdmi \
@@ -85,40 +84,31 @@ CFLAGS= $(DEBUG) \
 		-D ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\) \
 		-fomit-frame-pointer \
 		-mthumb-interwork \
-		-fno-strict-aliasing
+#		-fno-strict-aliasing
+
+#		-I $(UIP_COMMON_DIR) \
+#		-I ./webserver \
 #		-fno-dwarf2-cfi-asm \
 		
 THUMB_SOURCE= \
 		main.c \
 		./ParTest/ParTest.c \
-		./LCD/portlcd.c \
-		$(DEMO_COMMON_DIR)/BlockQ.c \
-		$(DEMO_COMMON_DIR)/blocktim.c \
 		$(DEMO_COMMON_DIR)/flash.c \
-		$(DEMO_COMMON_DIR)/integer.c \
-		$(DEMO_COMMON_DIR)/GenQTest.c \
-		$(DEMO_COMMON_DIR)/QPeek.c \
-		$(DEMO_COMMON_DIR)/dynamic.c \
-		./webserver/uIP_Task.c \
-		./webserver/emac.c \
-		./webserver/httpd.c \
-		./webserver/httpd-cgi.c \
-		./webserver/httpd-fs.c \
-		./webserver/http-strings.c \
-		$(UIP_COMMON_DIR)/uip_arp.c \
-		$(UIP_COMMON_DIR)/psock.c \
-		$(UIP_COMMON_DIR)/timer.c \
-		$(UIP_COMMON_DIR)/uip.c \
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/port.c \
 		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
-		syscalls.c
+		syscalls.c		\
+		$(DEMO_COMMON_DIR)/BlockQ.c \
+#		$(DEMO_COMMON_DIR)/blocktim.c \
+#		$(DEMO_COMMON_DIR)/integer.c \
+#		$(DEMO_COMMON_DIR)/GenQTest.c \
+#		$(DEMO_COMMON_DIR)/QPeek.c \
+#		$(DEMO_COMMON_DIR)/dynamic.c \
 
 ARM_SOURCE= \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/portISR.c \
-		./webserver/EMAC_ISR.c
 
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)

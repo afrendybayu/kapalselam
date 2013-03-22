@@ -102,7 +102,7 @@
 
 #define configUSE_PREEMPTION		0
 #define configUSE_IDLE_HOOK         0
-#define configUSE_TICK_HOOK         1
+#define configUSE_TICK_HOOK         0
 //#define configCPU_CLOCK_HZ          ( ( unsigned long ) 48000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
 #define configCPU_CLOCK_HZ          ( ( unsigned long ) 60000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
 #define configTICK_RATE_HZ          ( ( portTickType ) 1000 )
@@ -110,7 +110,7 @@
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 104 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( 18 * 1024 ) )
 #define configMAX_TASK_NAME_LEN		( 10 )
-#define configUSE_TRACE_FACILITY	1
+#define configUSE_TRACE_FACILITY	0
 #define configUSE_16_BIT_TICKS		0
 #define configIDLE_SHOULD_YIELD		1
 #define configUSE_MUTEXES			1

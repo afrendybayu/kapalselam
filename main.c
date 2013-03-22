@@ -102,15 +102,15 @@
 #include "semphr.h"
 
 /* Demo app includes. */
-#include "BlockQ.h"
-#include "death.h"
-#include "blocktim.h"
-#include "LCD/portlcd.h"
-#include "flash.h"
+//#include "BlockQ.h"
+//#include "death.h"
+//#include "blocktim.h"
+//#include "LCD/portlcd.h"
+//#include "flash.h"
 #include "partest.h"
-#include "GenQTest.h"
-#include "QPeek.h"
-#include "dynamic.h"
+//#include "GenQTest.h"
+//#include "QPeek.h"
+//#include "dynamic.h"
 
 /* Demo application definitions. */
 #define mainQUEUE_SIZE						( 3 )
@@ -159,15 +159,7 @@
  * The task that handles the uIP stack.  All TCP/IP processing is performed in
  * this task.
  */
-extern void vuIP_Task( void *pvParameters );
 
-/*
- * The LCD is written two by more than one task so is controlled by a 
- * 'gatekeeper' task.  This is the only task that is actually permitted to 
- * access the LCD directly.  Other tasks wanting to display a message send
- * the message to the gatekeeper.
- */
-static void vLCDTask( void *pvParameters );
 
 static void vLedTask( void *pvParameters );
 
@@ -175,7 +167,7 @@ static void vLedTask( void *pvParameters );
 static void prvSetupHardware( void );
 
 /* The queue used to send messages to the LCD task. */
-xQueueHandle xLCDQueue;
+//xQueueHandle xLCDQueue;
 xTaskHandle hdl_led;
 /*-----------------------------------------------------------*/
 
@@ -183,16 +175,25 @@ void dummy_del(int a)	{
 	int i,j,k,z;
 	for (z=0; z<a; z++)
 		for (i=0; i<1000; i++)	{
-			for(j=0; j<1200; j++)		// untuk 60Mhz --> 500 ms
+			//for(j=0; j<1200; j++)		// untuk 60Mhz --> 500 ms
+			for(j=0; j<200; j++)		// untuk 60Mhz --> 500 ms
 				k=0;
 		}
+}
+
+void loop_led()	{
+	while(1)	{
+		led_blink();
+	}
 }
 
 void led_blink()	{
 	dummy_del(1);
 	FIO0CLR = BIT(27);
+	//FIO1CLR = BIT(18);
 	dummy_del(1);
 	FIO0SET = BIT(27);
+	//FIO1SET = BIT(18);
 }
 
 int main( void )
@@ -221,6 +222,9 @@ int main( void )
 		//	ada di Common/Minimal/blocktim.c
 
 	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
+		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	
+
 	
     //vStartLEDFlashTasks( mainFLASH_PRIORITY );					// mainFLASH_PRIORITY	= tskIDLE_PRIORITY + 2 = 
 		//	xTaskCreate( vLEDFlashTask, ....) ada di Common/Minimal/flash.c
@@ -236,12 +240,14 @@ int main( void )
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
+		// ada di source/tasks.c
 
     /* Will only get here if there was insufficient memory to create the idle task. */
 	return 0; 
 }
 /*-----------------------------------------------------------*/
 
+#if 0
 void vApplicationTickHook( void )
 {
 unsigned portBASE_TYPE uxColumn = 0;
@@ -249,14 +255,14 @@ static xLCDMessage xMessage = { 0, "PASS" };
 static unsigned portLONG ulTicksSinceLastDisplay = 0;
 static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-	/* Called from every tick interrupt.  Have enough ticks passed to make it
-	time to perform our health status check again? */
+	// Called from every tick interrupt.  Have enough ticks passed to make it
+	// time to perform our health status check again?
 	ulTicksSinceLastDisplay++;
 	if( ulTicksSinceLastDisplay >= mainCHECK_DELAY )
 	{
 		ulTicksSinceLastDisplay = 0;
 		
-		/* Has an error been found in any task? */
+		// Has an error been found in any task?
 
         if( xAreBlockingQueuesStillRunning() != pdTRUE )
 		{
@@ -285,11 +291,12 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
         
         xMessage.xColumn++;
 
-		/* Send the message to the LCD gatekeeper for display. */
+		// Send the message to the LCD gatekeeper for display.
 		xHigherPriorityTaskWoken = pdFALSE;
-		xQueueSendToBackFromISR( xLCDQueue, &xMessage, &xHigherPriorityTaskWoken );
+		//xQueueSendToBackFromISR( xLCDQueue, &xMessage, &xHigherPriorityTaskWoken );
 	}
 }
+#endif
 /*-----------------------------------------------------------*/
 
 int tog;
@@ -306,39 +313,18 @@ void togle_led_utama(void)	{
 
 void vLedTask( void *pvParameters )
 {
+	dummy_del(4);
+	led_blink();
+	dummy_del(4);
 	for( ;; )
 	{
-		togle_led_utama();
-		dummy_del(1);
+		led_blink();
 		//vTaskDelay(500);
 	}
 
 }
 
 
-void vLCDTask( void *pvParameters )
-{
-xLCDMessage xMessage;
-
-	/* Initialise the LCD and display a startup message. */
-	LCD_init();
-	LCD_cur_off();
-    LCD_cls();    
-    LCD_gotoxy( 1, 1 );
-    LCD_puts( "www.FreeRTOS.org" );
-
-	for( ;; )
-	{
-		/* Wait for a message to arrive that requires displaying. */
-		while( xQueueReceive( xLCDQueue, &xMessage, portMAX_DELAY ) != pdPASS );
-		
-		/* Display the message.  Print each message to a different position. */
-		LCD_cls();
-		LCD_gotoxy( ( xMessage.xColumn & 0x07 ) + 1, ( xMessage.xColumn & 0x01 ) + 1 );
-		LCD_puts( xMessage.pcMessage );
-	}
-
-}
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware( void )
@@ -389,10 +375,12 @@ static void prvSetupHardware( void )
 	PLL used.  It is possible faster overall performance could be obtained by
 	tuning the MAM and PLL settings.
 	*/
+	#if 0
 	MAMCR = 0;
 	//MAMTIM = mainMAM_TIM_3;			// MAMTIM=1 --> 20MHz, MAMTIM=2 --> 40MHz, MAMTIM=3 >40MHz, MAMTIM=4 >=60MHz
 	MAMTIM = mainMAM_TIM_4;				// 
 	MAMCR = mainMAM_MODE_FULL;
+	#endif
 	//*/
 	
 	/* Setup the led's on the MCB2300 board */
