@@ -14,8 +14,8 @@ Archive member included because of file (symbol)
 Allocating common symbols
 Common symbol       size              file
 
-tog                 0x4               main.o
-hdl_led             0x4               main.o
+hdl_led2            0x4               main.o
+hdl_led1            0x4               main.o
 
 Memory Configuration
 
@@ -39,7 +39,7 @@ LOAD source/portable/GCC/ARM7_LPC23xx/port.o
 LOAD source/portable/MemMang/heap_2.o
 LOAD syscalls.o
 LOAD minimal/BlockQ.o
-LOAD /tmp/ccwMdFlV.o
+LOAD /tmp/ccoryKDp.o
 START GROUP
 LOAD /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/thumb/interwork/libgcc.a
 LOAD /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a
@@ -50,143 +50,135 @@ END GROUP
 
 startup         0x00000000       0x44
  *(.startup)
- .startup       0x00000000       0x44 /tmp/ccwMdFlV.o
+ .startup       0x00000000       0x44 /tmp/ccoryKDp.o
 
-prog            0x00000044     0x3184
+prog            0x00000044     0x2c00
  *(.text)
- .text          0x00000044      0x1d0 source/portable/GCC/ARM7_LPC23xx/portISR.o
-                0x000001bc                vPortExitCritical
+ .text          0x00000044      0x1e0 source/portable/GCC/ARM7_LPC23xx/portISR.o
+                0x000001cc                vPortExitCritical
                 0x00000090                vPortYieldProcessor
-                0x0000015c                vPortDisableInterruptsFromThumb
+                0x0000016c                vPortDisableInterruptsFromThumb
                 0x0000013c                vNonPreemptiveTick
                 0x00000044                vPortISRStartFirstTask
-                0x00000174                vPortEnableInterruptsFromThumb
-                0x0000018c                vPortEnterCritical
- .text          0x00000214      0x1f0 main.o
-                0x0000031c                togle_led_utama
-                0x00000284                led_blink
-                0x0000027c                loop_led
-                0x00000214                dummy_del
-                0x000002b0                main
- .text          0x00000404      0x244 ./ParTest/ParTest.o
-                0x000005bc                vParTestToggleLED
-                0x00000570                vParTestSetLED
-                0x00000618                uxParTextGetLED
-                0x00000404                vParTestInitialise
- .text          0x00000648       0xfc minimal/flash.o
-                0x00000648                vStartLEDFlashTasks
- .text          0x00000744      0x1c4 source/list.o
-                0x000007a0                vListInsertEnd
-                0x0000078c                vListInitialiseItem
-                0x00000744                vListInitialise
-                0x000008a0                uxListRemove
-                0x00000808                vListInsert
- .text          0x00000908      0x9b4 source/queue.o
-                0x00000c60                xQueueGenericSendFromISR
-                0x00000fb8                vQueueDelete
-                0x00000b14                xQueueGenericSend
-                0x00000ecc                xQueueReceiveFromISR
-                0x000009d0                xQueueGenericCreate
-                0x0000128c                xQueueIsQueueFullFromISR
-                0x00000f74                uxQueueMessagesWaiting
-                0x00000d08                xQueueGenericReceive
-                0x00000908                xQueueGenericReset
-                0x00000f9c                uxQueueMessagesWaitingFromISR
-                0x00001228                xQueueIsQueueEmptyFromISR
-                0x00000a74                xQueueCreateMutex
- .text          0x000012bc     0x113c source/tasks.o
-                0x00001578                uxTaskPriorityGet
-                0x000015c0                vTaskPrioritySet
-                0x00001a0c                vTaskEndScheduler
-                0x00001d7c                vTaskPlaceOnEventList
-                0x000012bc                xTaskGenericCreate
-                0x000017c8                xTaskIsTaskSuspended
-                0x000018c4                xTaskResumeFromISR
-                0x00001b40                xTaskGetTickCount
-                0x00001dec                xTaskRemoveFromEventList
-                0x00001468                vTaskDelete
-                0x00001ed8                xTaskCheckForTimeOut
-                0x00001a24                vTaskSuspendAll
-                0x00001b64                xTaskGetTickCountFromISR
-                0x0000235c                vTaskPriorityDisinherit
-                0x00002290                vTaskPriorityInherit
-                0x0000181c                vTaskResume
-                0x00001cdc                vTaskSwitchContext
-                0x00001714                vTaskSuspend
-                0x00001b84                uxTaskGetNumberOfTasks
-                0x00001b90                vTaskIncrementTick
-                0x00002278                xTaskGetCurrentTaskHandle
-                0x00001a34                xTaskResumeAll
-                0x00001998                vTaskStartScheduler
-                0x00001f80                vTaskMissedYield
-                0x00001518                vTaskDelay
-                0x00001eb0                vTaskSetTimeOutState
- .text          0x000023f8      0x258 source/portable/GCC/ARM7_LPC23xx/port.o
-                0x000025b8                xPortStartScheduler
-                0x000025cc                vPortEndScheduler
-                0x000023f8                pxPortInitialiseStack
- .text          0x00002650      0x298 source/portable/MemMang/heap_2.o
-                0x00002880                xPortGetFreeHeapSize
-                0x000027e0                vPortFree
-                0x00002650                pvPortMalloc
-                0x0000288c                vPortInitialiseBlocks
- .text          0x000028e8      0x1b4 syscalls.o
-                0x00002a78                _isatty_r
-                0x00002934                _lseek_r
-                0x00002a34                _fstat_r
-                0x000029c4                _sbrk_r
-                0x000028e8                _read_r
-                0x000029b0                _close_r
-                0x00002974                _write_r
- .text          0x00002a9c      0x478 minimal/BlockQ.o
-                0x00002a9c                vStartBlockingQueueTasks
-                0x00002e54                xAreBlockingQueuesStillRunning
- .text          0x00002f14       0xc4 /tmp/ccwMdFlV.o
-                0x00002f14                start
-                0x00002fbc                endless_loop
- .text          0x00002fd8        0xc /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
-                0x00002fd8                __errno
- .text          0x00002fe4       0x64 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
-                0x00002fe4                memcpy
- .text          0x00003048       0x64 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
-                0x00003048                memset
- .text          0x000030ac       0x88 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
-                0x000030ac                strncpy
+                0x00000184                vPortEnableInterruptsFromThumb
+                0x0000019c                vPortEnterCritical
+ .text          0x00000224      0x238 main.o
+                0x00000294                led_blink
+                0x0000028c                loop_led
+                0x00000224                dummy_del
+                0x000002c0                main
+ .text          0x0000045c      0x22c ./ParTest/ParTest.o
+                0x000005fc                vParTestToggleLED
+                0x000005b0                vParTestSetLED
+                0x00000658                uxParTextGetLED
+                0x0000045c                vParTestInitialise
+ .text          0x00000688       0xfc minimal/flash.o
+                0x00000688                vStartLEDFlashTasks
+ .text          0x00000784      0x1c4 source/list.o
+                0x000007e0                vListInsertEnd
+                0x000007cc                vListInitialiseItem
+                0x00000784                vListInitialise
+                0x000008e0                uxListRemove
+                0x00000848                vListInsert
+ .text          0x00000948      0x9b4 source/queue.o
+                0x00000ca0                xQueueGenericSendFromISR
+                0x00000ff8                vQueueDelete
+                0x00000b54                xQueueGenericSend
+                0x00000f0c                xQueueReceiveFromISR
+                0x00000a10                xQueueGenericCreate
+                0x000012cc                xQueueIsQueueFullFromISR
+                0x00000fb4                uxQueueMessagesWaiting
+                0x00000d48                xQueueGenericReceive
+                0x00000948                xQueueGenericReset
+                0x00000fdc                uxQueueMessagesWaitingFromISR
+                0x00001268                xQueueIsQueueEmptyFromISR
+                0x00000ab4                xQueueCreateMutex
+ .text          0x000012fc      0xb70 source/tasks.o
+                0x00001570                vTaskEndScheduler
+                0x000018e0                vTaskPlaceOnEventList
+                0x000012fc                xTaskGenericCreate
+                0x000016a4                xTaskGetTickCount
+                0x00001934                xTaskRemoveFromEventList
+                0x00001a20                xTaskCheckForTimeOut
+                0x00001588                vTaskSuspendAll
+                0x000016c8                xTaskGetTickCountFromISR
+                0x00001dd0                vTaskPriorityDisinherit
+                0x00001d04                vTaskPriorityInherit
+                0x00001840                vTaskSwitchContext
+                0x000016e8                uxTaskGetNumberOfTasks
+                0x000016f4                vTaskIncrementTick
+                0x00001cec                xTaskGetCurrentTaskHandle
+                0x00001598                xTaskResumeAll
+                0x00001508                vTaskStartScheduler
+                0x00001ab4                vTaskMissedYield
+                0x000014a8                vTaskDelay
+                0x000019f8                vTaskSetTimeOutState
+ .text          0x00001e6c      0x258 source/portable/GCC/ARM7_LPC23xx/port.o
+                0x0000202c                xPortStartScheduler
+                0x00002040                vPortEndScheduler
+                0x00001e6c                pxPortInitialiseStack
+ .text          0x000020c4      0x298 source/portable/MemMang/heap_2.o
+                0x000022f4                xPortGetFreeHeapSize
+                0x00002254                vPortFree
+                0x000020c4                pvPortMalloc
+                0x00002300                vPortInitialiseBlocks
+ .text          0x0000235c      0x1b4 syscalls.o
+                0x000024ec                _isatty_r
+                0x000023a8                _lseek_r
+                0x000024a8                _fstat_r
+                0x00002438                _sbrk_r
+                0x0000235c                _read_r
+                0x00002424                _close_r
+                0x000023e8                _write_r
+ .text          0x00002510      0x478 minimal/BlockQ.o
+                0x00002510                vStartBlockingQueueTasks
+                0x000028c8                xAreBlockingQueuesStillRunning
+ .text          0x00002988       0xc4 /tmp/ccoryKDp.o
+                0x00002988                start
+                0x00002a30                endless_loop
+ .text          0x00002a4c        0xc /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+                0x00002a4c                __errno
+ .text          0x00002a58       0x64 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+                0x00002a58                memcpy
+ .text          0x00002abc       0x64 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+                0x00002abc                memset
+ .text          0x00002b20       0x88 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+                0x00002b20                strncpy
  *(.rodata)
- .rodata        0x00003134        0x4 main.o
- .rodata        0x00003138        0x8 minimal/flash.o
- .rodata        0x00003140        0x8 source/tasks.o
- .rodata        0x00003148        0x2 source/portable/MemMang/heap_2.o
- *fill*         0x0000314a        0x2 00
- .rodata        0x0000314c       0x30 minimal/BlockQ.o
- .rodata        0x0000317c        0x4 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
-                0x0000317c                _global_impure_ptr
+ .rodata        0x00002ba8        0xc main.o
+ .rodata        0x00002bb4        0x8 minimal/flash.o
+ .rodata        0x00002bbc        0x8 source/tasks.o
+ .rodata        0x00002bc4        0x2 source/portable/MemMang/heap_2.o
+ *fill*         0x00002bc6        0x2 00
+ .rodata        0x00002bc8       0x30 minimal/BlockQ.o
+ .rodata        0x00002bf8        0x4 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+                0x00002bf8                _global_impure_ptr
  *(.rodata*)
  .rodata.str1.4
-                0x00003180        0x2 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+                0x00002bfc        0x2 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
                                   0x4 (size before relaxing)
  *(.glue_7)
- *fill*         0x00003182        0x2 00
- .glue_7        0x00003184       0x24 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
-                0x0000319c                __main_from_arm
-                0x00003190                __vTaskIncrementTick_from_arm
-                0x00003184                __vTaskSwitchContext_from_arm
+ *fill*         0x00002bfe        0x2 00
+ .glue_7        0x00002c00       0x24 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+                0x00002c18                __main_from_arm
+                0x00002c0c                __vTaskIncrementTick_from_arm
+                0x00002c00                __vTaskSwitchContext_from_arm
  *(.glue_7t)
- .glue_7t       0x000031a8       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
-                0x000031ac                __vPortEnterCritical_change_to_arm
-                0x000031b4                __vPortExitCritical_change_to_arm
-                0x000031c0                __vPortISRStartFirstTask_from_thumb
-                0x000031b8                __vPortDisableInterruptsFromThumb_from_thumb
-                0x000031b0                __vPortExitCritical_from_thumb
-                0x000031a8                __vPortEnterCritical_from_thumb
-                0x000031c4                __vPortISRStartFirstTask_change_to_arm
-                0x000031bc                __vPortDisableInterruptsFromThumb_change_to_arm
+ .glue_7t       0x00002c24       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+                0x00002c28                __vPortEnterCritical_change_to_arm
+                0x00002c30                __vPortExitCritical_change_to_arm
+                0x00002c3c                __vPortISRStartFirstTask_from_thumb
+                0x00002c34                __vPortDisableInterruptsFromThumb_from_thumb
+                0x00002c2c                __vPortExitCritical_from_thumb
+                0x00002c24                __vPortEnterCritical_from_thumb
+                0x00002c40                __vPortISRStartFirstTask_change_to_arm
+                0x00002c38                __vPortDisableInterruptsFromThumb_change_to_arm
  *(.eh_frame)
-                0x000031c8                __end_of_text__ = .
+                0x00002c44                __end_of_text__ = .
 
-.data           0x40000000      0x410 load address 0x000031c8
+.data           0x40000000      0x410 load address 0x00002c44
                 0x40000000                __data_beg__ = .
-                0x000031c8                __data_beg_src__ = __end_of_text__
+                0x00002c44                __data_beg_src__ = __end_of_text__
  *(.data)
  .data          0x40000000        0x4 source/portable/GCC/ARM7_LPC23xx/portISR.o
                 0x40000000                ulCriticalNesting
@@ -196,22 +188,22 @@ prog            0x00000044     0x3184
                 0x4000000c                _impure_ptr
                 0x40000410                __data_end__ = .
 
-.bss            0x40000410     0x4928
+.bss            0x40000410     0x48fc
                 0x40000410                __bss_beg__ = .
  *(.bss)
  .bss           0x40000410        0x4 minimal/flash.o
- .bss           0x40000414       0xec source/tasks.o
+ .bss           0x40000414       0xc0 source/tasks.o
                 0x40000414                pxCurrentTCB
- .bss           0x40000500     0x4814 source/portable/MemMang/heap_2.o
- .bss           0x40004d14        0x4 syscalls.o
- .bss           0x40004d18       0x18 minimal/BlockQ.o
- COMMON         0x40004d30        0x8 main.o
-                0x40004d30                tog
-                0x40004d34                hdl_led
-                0x40004d38                . = ALIGN (0x4)
-                0x40004d38                _bss_end__ = .
-                0x40004d38                __bss_end__ = .
-                0x40004d38                __end__ = .
+ .bss           0x400004d4     0x4814 source/portable/MemMang/heap_2.o
+ .bss           0x40004ce8        0x4 syscalls.o
+ .bss           0x40004cec       0x18 minimal/BlockQ.o
+ COMMON         0x40004d04        0x8 main.o
+                0x40004d04                hdl_led2
+                0x40004d08                hdl_led1
+                0x40004d0c                . = ALIGN (0x4)
+                0x40004d0c                _bss_end__ = .
+                0x40004d0c                __bss_end__ = .
+                0x40004d0c                __end__ = .
 
 .usbram         0x7fd00000        0x0
                 0x7fd00000                __usbram_beg__ = .
@@ -227,114 +219,130 @@ prog            0x00000044     0x3184
                 0x7fe00000                PROVIDE (end, .)
 OUTPUT(RTOSDemo.elf elf32-littlearm)
 
-.debug_abbrev   0x00000000     0x1058
- .debug_abbrev  0x00000000       0x76 source/portable/GCC/ARM7_LPC23xx/portISR.o
- .debug_abbrev  0x00000076      0x10d main.o
- .debug_abbrev  0x00000183       0x8b ./ParTest/ParTest.o
- .debug_abbrev  0x0000020e       0x8f minimal/flash.o
- .debug_abbrev  0x0000029d       0xe5 source/list.o
- .debug_abbrev  0x00000382      0x17c source/queue.o
- .debug_abbrev  0x000004fe      0x1b1 source/tasks.o
- .debug_abbrev  0x000006af       0xcd source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_abbrev  0x0000077c      0x15d source/portable/MemMang/heap_2.o
- .debug_abbrev  0x000008d9      0x1a2 syscalls.o
- .debug_abbrev  0x00000a7b      0x157 minimal/BlockQ.o
- .debug_abbrev  0x00000bd2       0x10 /tmp/ccwMdFlV.o
- .debug_abbrev  0x00000be2      0x15f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
- .debug_abbrev  0x00000d41      0x157 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
- .debug_abbrev  0x00000e98       0x99 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
- .debug_abbrev  0x00000f31       0x9a /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
- .debug_abbrev  0x00000fcb       0x8d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+.debug_abbrev   0x00000000     0x105a
+ .debug_abbrev  0x00000000       0x8b source/portable/GCC/ARM7_LPC23xx/portISR.o
+ .debug_abbrev  0x0000008b       0xe7 main.o
+ .debug_abbrev  0x00000172       0x8b ./ParTest/ParTest.o
+ .debug_abbrev  0x000001fd       0x8f minimal/flash.o
+ .debug_abbrev  0x0000028c       0xe5 source/list.o
+ .debug_abbrev  0x00000371      0x17c source/queue.o
+ .debug_abbrev  0x000004ed      0x1c4 source/tasks.o
+ .debug_abbrev  0x000006b1       0xcd source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_abbrev  0x0000077e      0x15d source/portable/MemMang/heap_2.o
+ .debug_abbrev  0x000008db      0x1a2 syscalls.o
+ .debug_abbrev  0x00000a7d      0x157 minimal/BlockQ.o
+ .debug_abbrev  0x00000bd4       0x10 /tmp/ccoryKDp.o
+ .debug_abbrev  0x00000be4      0x15f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+ .debug_abbrev  0x00000d43      0x157 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+ .debug_abbrev  0x00000e9a       0x99 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_abbrev  0x00000f33       0x9a /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_abbrev  0x00000fcd       0x8d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
-.debug_info     0x00000000     0x5dc6
- .debug_info    0x00000000      0x2a3 source/portable/GCC/ARM7_LPC23xx/portISR.o
- .debug_info    0x000002a3      0x29e main.o
- .debug_info    0x00000541      0x257 ./ParTest/ParTest.o
- .debug_info    0x00000798      0x26b minimal/flash.o
- .debug_info    0x00000a03      0x421 source/list.o
- .debug_info    0x00000e24      0xb22 source/queue.o
- .debug_info    0x00001946     0x128e source/tasks.o
- .debug_info    0x00002bd4      0x28d source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_info    0x00002e61      0x446 source/portable/MemMang/heap_2.o
- .debug_info    0x000032a7      0xfe6 syscalls.o
- .debug_info    0x0000428d      0x53d minimal/BlockQ.o
- .debug_info    0x000047ca       0x80 /tmp/ccwMdFlV.o
- .debug_info    0x0000484a      0x913 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
- .debug_info    0x0000515d      0x922 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
- .debug_info    0x00005a7f      0x10e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
- .debug_info    0x00005b8d      0x112 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
- .debug_info    0x00005c9f      0x127 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+.debug_info     0x00000000     0x5a5a
+ .debug_info    0x00000000      0x2a5 source/portable/GCC/ARM7_LPC23xx/portISR.o
+ .debug_info    0x000002a5      0x2a9 main.o
+ .debug_info    0x0000054e      0x257 ./ParTest/ParTest.o
+ .debug_info    0x000007a5      0x26b minimal/flash.o
+ .debug_info    0x00000a10      0x421 source/list.o
+ .debug_info    0x00000e31      0xb22 source/queue.o
+ .debug_info    0x00001953      0xf15 source/tasks.o
+ .debug_info    0x00002868      0x28d source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_info    0x00002af5      0x446 source/portable/MemMang/heap_2.o
+ .debug_info    0x00002f3b      0xfe6 syscalls.o
+ .debug_info    0x00003f21      0x53d minimal/BlockQ.o
+ .debug_info    0x0000445e       0x80 /tmp/ccoryKDp.o
+ .debug_info    0x000044de      0x913 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+ .debug_info    0x00004df1      0x922 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+ .debug_info    0x00005713      0x10e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_info    0x00005821      0x112 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_info    0x00005933      0x127 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
-.debug_line     0x00000000     0x1036
- .debug_line    0x00000000       0x7b source/portable/GCC/ARM7_LPC23xx/portISR.o
- .debug_line    0x0000007b       0x90 main.o
- .debug_line    0x0000010b       0x7b ./ParTest/ParTest.o
- .debug_line    0x00000186       0x8d minimal/flash.o
- .debug_line    0x00000213       0xb3 source/list.o
- .debug_line    0x000002c6      0x226 source/queue.o
- .debug_line    0x000004ec      0x25f source/tasks.o
- .debug_line    0x0000074b       0xb3 source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_line    0x000007fe       0xe9 source/portable/MemMang/heap_2.o
- .debug_line    0x000008e7      0x176 syscalls.o
- .debug_line    0x00000a5d       0xdc minimal/BlockQ.o
- .debug_line    0x00000b39       0x78 /tmp/ccwMdFlV.o
- .debug_line    0x00000bb1      0x113 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
- .debug_line    0x00000cc4      0x104 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
- .debug_line    0x00000dc8       0xc9 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
- .debug_line    0x00000e91       0xd5 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
- .debug_line    0x00000f66       0xd0 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+.debug_line     0x00000000      0xfba
+ .debug_line    0x00000000       0x7d source/portable/GCC/ARM7_LPC23xx/portISR.o
+ .debug_line    0x0000007d       0x97 main.o
+ .debug_line    0x00000114       0x78 ./ParTest/ParTest.o
+ .debug_line    0x0000018c       0x8d minimal/flash.o
+ .debug_line    0x00000219       0xb3 source/list.o
+ .debug_line    0x000002cc      0x226 source/queue.o
+ .debug_line    0x000004f2      0x1dd source/tasks.o
+ .debug_line    0x000006cf       0xb3 source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_line    0x00000782       0xe9 source/portable/MemMang/heap_2.o
+ .debug_line    0x0000086b      0x176 syscalls.o
+ .debug_line    0x000009e1       0xdc minimal/BlockQ.o
+ .debug_line    0x00000abd       0x78 /tmp/ccoryKDp.o
+ .debug_line    0x00000b35      0x113 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+ .debug_line    0x00000c48      0x104 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+ .debug_line    0x00000d4c       0xc9 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_line    0x00000e15       0xd5 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_line    0x00000eea       0xd0 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
-.debug_frame    0x00000000      0x99c
- .debug_frame   0x00000000       0x80 source/portable/GCC/ARM7_LPC23xx/portISR.o
- .debug_frame   0x00000080       0xac main.o
- .debug_frame   0x0000012c       0x5c ./ParTest/ParTest.o
- .debug_frame   0x00000188       0x40 minimal/flash.o
- .debug_frame   0x000001c8       0x74 source/list.o
- .debug_frame   0x0000023c      0x1b0 source/queue.o
- .debug_frame   0x000003ec      0x304 source/tasks.o
- .debug_frame   0x000006f0       0x60 source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_frame   0x00000750       0x74 source/portable/MemMang/heap_2.o
- .debug_frame   0x000007c4       0xbc syscalls.o
- .debug_frame   0x00000880       0x78 minimal/BlockQ.o
- .debug_frame   0x000008f8       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
- .debug_frame   0x00000918       0x28 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
- .debug_frame   0x00000940       0x2c /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
- .debug_frame   0x0000096c       0x30 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+.debug_frame    0x00000000      0x8f0
+ .debug_frame   0x00000000       0x90 source/portable/GCC/ARM7_LPC23xx/portISR.o
+ .debug_frame   0x00000090       0xb4 main.o
+ .debug_frame   0x00000144       0x5c ./ParTest/ParTest.o
+ .debug_frame   0x000001a0       0x40 minimal/flash.o
+ .debug_frame   0x000001e0       0x74 source/list.o
+ .debug_frame   0x00000254      0x1b0 source/queue.o
+ .debug_frame   0x00000404      0x240 source/tasks.o
+ .debug_frame   0x00000644       0x60 source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_frame   0x000006a4       0x74 source/portable/MemMang/heap_2.o
+ .debug_frame   0x00000718       0xbc syscalls.o
+ .debug_frame   0x000007d4       0x78 minimal/BlockQ.o
+ .debug_frame   0x0000084c       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+ .debug_frame   0x0000086c       0x28 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_frame   0x00000894       0x2c /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_frame   0x000008c0       0x30 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+
+.debug_loc      0x00000000      0xf45
+ .debug_loc     0x00000000       0x1f source/portable/GCC/ARM7_LPC23xx/portISR.o
+ .debug_loc     0x0000001f       0xfd main.o
+ .debug_loc     0x0000011c       0x5d ./ParTest/ParTest.o
+ .debug_loc     0x00000179       0x56 minimal/flash.o
+ .debug_loc     0x000001cf       0x9b source/list.o
+ .debug_loc     0x0000026a      0x2b7 source/queue.o
+ .debug_loc     0x00000521      0x34b source/tasks.o
+ .debug_loc     0x0000086c       0x5d source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_loc     0x000008c9       0x75 source/portable/MemMang/heap_2.o
+ .debug_loc     0x0000093e      0x115 syscalls.o
+ .debug_loc     0x00000a53       0xa1 minimal/BlockQ.o
+ .debug_loc     0x00000af4      0x151 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_loc     0x00000c45      0x15f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_loc     0x00000da4      0x1a1 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
 .debug_pubnames
-                0x00000000      0x849
+                0x00000000      0x7af
  .debug_pubnames
                 0x00000000       0xe6 source/portable/GCC/ARM7_LPC23xx/portISR.o
  .debug_pubnames
-                0x000000e6       0x6c main.o
+                0x000000e6       0x5e main.o
  .debug_pubnames
-                0x00000152       0x66 ./ParTest/ParTest.o
+                0x00000144       0x66 ./ParTest/ParTest.o
  .debug_pubnames
-                0x000001b8       0x2a minimal/flash.o
+                0x000001aa       0x2a minimal/flash.o
  .debug_pubnames
-                0x000001e2       0x72 source/list.o
+                0x000001d4       0x72 source/list.o
  .debug_pubnames
-                0x00000254      0x145 source/queue.o
+                0x00000246      0x145 source/queue.o
  .debug_pubnames
-                0x00000399      0x277 source/tasks.o
+                0x0000038b      0x1eb source/tasks.o
  .debug_pubnames
-                0x00000610       0x5a source/portable/GCC/ARM7_LPC23xx/port.o
+                0x00000576       0x5a source/portable/GCC/ARM7_LPC23xx/port.o
  .debug_pubnames
-                0x0000066a       0x64 source/portable/MemMang/heap_2.o
+                0x000005d0       0x64 source/portable/MemMang/heap_2.o
  .debug_pubnames
-                0x000006ce       0x7a syscalls.o
+                0x00000634       0x7a syscalls.o
  .debug_pubnames
-                0x00000748       0x52 minimal/BlockQ.o
+                0x000006ae       0x52 minimal/BlockQ.o
  .debug_pubnames
-                0x0000079a       0x1e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+                0x00000700       0x1e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
  .debug_pubnames
-                0x000007b8       0x39 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+                0x0000071e       0x39 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
  .debug_pubnames
-                0x000007f1       0x1d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+                0x00000757       0x1d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
  .debug_pubnames
-                0x0000080e       0x1d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+                0x00000774       0x1d /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
  .debug_pubnames
-                0x0000082b       0x1e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+                0x00000791       0x1e /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
 .debug_aranges  0x00000000      0x208
  .debug_aranges
@@ -360,7 +368,7 @@ OUTPUT(RTOSDemo.elf elf32-littlearm)
  .debug_aranges
                 0x00000140       0x20 minimal/BlockQ.o
  .debug_aranges
-                0x00000160       0x28 /tmp/ccwMdFlV.o
+                0x00000160       0x28 /tmp/ccoryKDp.o
  .debug_aranges
                 0x00000188       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
  .debug_aranges
@@ -370,27 +378,27 @@ OUTPUT(RTOSDemo.elf elf32-littlearm)
  .debug_aranges
                 0x000001e8       0x20 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
 
-.debug_str      0x00000000      0x9c8
+.debug_str      0x00000000      0x9a1
  .debug_str     0x00000000       0x12 source/portable/GCC/ARM7_LPC23xx/portISR.o
- .debug_str     0x00000012       0x12 main.o
- .debug_str     0x00000024       0x12 ./ParTest/ParTest.o
- .debug_str     0x00000036       0x12 minimal/flash.o
- .debug_str     0x00000048       0x3d source/list.o
- .debug_str     0x00000085       0xe4 source/queue.o
- .debug_str     0x00000169       0xfd source/tasks.o
- .debug_str     0x00000266       0x12 source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_str     0x00000278       0x28 source/portable/MemMang/heap_2.o
- .debug_str     0x000002a0       0x20 syscalls.o
- .debug_str     0x000002c0       0x4f minimal/BlockQ.o
- .debug_str     0x0000030f      0x47f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
+ .debug_str     0x00000012       0x1f main.o
+ .debug_str     0x00000031       0x12 ./ParTest/ParTest.o
+ .debug_str     0x00000043       0x12 minimal/flash.o
+ .debug_str     0x00000055       0x3d source/list.o
+ .debug_str     0x00000092       0xe4 source/queue.o
+ .debug_str     0x00000176       0xc9 source/tasks.o
+ .debug_str     0x0000023f       0x12 source/portable/GCC/ARM7_LPC23xx/port.o
+ .debug_str     0x00000251       0x28 source/portable/MemMang/heap_2.o
+ .debug_str     0x00000279       0x20 syscalls.o
+ .debug_str     0x00000299       0x4f minimal/BlockQ.o
+ .debug_str     0x000002e8      0x47f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(errno.o)
                                 0x4cb (size before relaxing)
- .debug_str     0x0000078e       0xb9 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
+ .debug_str     0x00000767       0xb9 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(impure.o)
                                 0x4e3 (size before relaxing)
- .debug_str     0x00000847       0xd1 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
+ .debug_str     0x00000820       0xd1 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
                                  0xfd (size before relaxing)
- .debug_str     0x00000918       0x61 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
+ .debug_str     0x000008f1       0x61 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
                                 0x147 (size before relaxing)
- .debug_str     0x00000979       0x4f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
+ .debug_str     0x00000952       0x4f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
                                 0x15d (size before relaxing)
 
 .comment        0x00000000      0x120
@@ -410,18 +418,3 @@ OUTPUT(RTOSDemo.elf elf32-littlearm)
  .comment       0x000000ea       0x12 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
  .comment       0x000000fc       0x12 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
  .comment       0x0000010e       0x12 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)
-
-.debug_loc      0x00000000     0x1072
- .debug_loc     0x00000000       0xd2 main.o
- .debug_loc     0x000000d2       0x5d ./ParTest/ParTest.o
- .debug_loc     0x0000012f       0x56 minimal/flash.o
- .debug_loc     0x00000185       0x9b source/list.o
- .debug_loc     0x00000220      0x2b7 source/queue.o
- .debug_loc     0x000004d7      0x4c2 source/tasks.o
- .debug_loc     0x00000999       0x5d source/portable/GCC/ARM7_LPC23xx/port.o
- .debug_loc     0x000009f6       0x75 source/portable/MemMang/heap_2.o
- .debug_loc     0x00000a6b      0x115 syscalls.o
- .debug_loc     0x00000b80       0xa1 minimal/BlockQ.o
- .debug_loc     0x00000c21      0x151 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memcpy.o)
- .debug_loc     0x00000d72      0x15f /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(memset.o)
- .debug_loc     0x00000ed1      0x1a1 /home/afrendy/projdb/koding/atinom/modul/TOOLCHAIN/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/thumb/interwork/libg.a(strncpy.o)

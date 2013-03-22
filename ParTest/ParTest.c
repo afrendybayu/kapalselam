@@ -79,7 +79,7 @@
 #include "partest.h"
 
 #define partstFIRST_IO			( ( unsigned portLONG ) 0x01 )
-#define partstNUM_LEDS			( 8 )
+#define partstNUM_LEDS			( 1 )
 #define partstALL_OUTPUTS_OFF	( ( unsigned portLONG ) 0xff )
 
 /*-----------------------------------------------------------
@@ -88,7 +88,6 @@
 
 void vParTestInitialise( void )
 {
-	
 	/* paksa PINSEL untuk GPIO */
 	PINSEL0 = 0x00000000;
 	PINSEL1 = 0x00000000;
@@ -113,30 +112,29 @@ void vParTestInitialise( void )
 	PINMODE7 = 0x00000000;
 	PINMODE8 = 0x00000000;
 	
-	PINSEL0 = PINSEL0 | 0x50; // enable TX & RX
-	
-	
+	PINSEL0 = PINSEL0 | 0x50;	// enable TX & RX
 
-	PCLKSEL0 = 0x55555555;	// PCLK is the same as CCLK
+	PCLKSEL0 = 0x55555555;		// PCLK is the same as CCLK
 	PCLKSEL1 = 0x55555555;
 	
 	PCONP   |= 0x80000000;
 	FIO1DIR  = 0xFFFFFFFF;
+
+//	FIO2DIR  = 0x000000FF;
+//	FIO2MASK = 0x00000000;
+//	FIO2CLR  = 0xFF;
+
+	SCS |= (1<<0); 				// fast mode for port 0 and 1
 	
-	
-	FIO2DIR  = 0x000000FF;
-	FIO2MASK = 0x00000000;
-	FIO2CLR  = 0xFF;
-	SCS |= (1<<0); 			//fast mode for port 0 and 1
-	
-    FIO2CLR = partstALL_OUTPUTS_OFF;
-    
+//    FIO2CLR = partstALL_OUTPUTS_OFF;
+
     FIO0DIR = BIT(27);
 	FIO0CLR = BIT(27);
 	
 	FIO1DIR = BIT(18);
 	FIO1CLR = BIT(18);
 	
+	MEMMAP = 0x01;				// SCB 
 	//FIO0SET = BIT(27);
 
 }

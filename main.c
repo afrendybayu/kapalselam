@@ -162,13 +162,16 @@
 
 
 static void vLedTask( void *pvParameters );
+static void vLedTask2( void *pvParameters );
 
 /* Configure the hardware as required by the demo. */
 static void prvSetupHardware( void );
 
 /* The queue used to send messages to the LCD task. */
 //xQueueHandle xLCDQueue;
-xTaskHandle hdl_led;
+xTaskHandle hdl_led1;
+xTaskHandle hdl_led2;
+
 /*-----------------------------------------------------------*/
 
 void dummy_del(int a)	{
@@ -181,7 +184,7 @@ void dummy_del(int a)	{
 		}
 }
 
-void loop_led()	{
+void loop_led()		{
 	while(1)	{
 		led_blink();
 	}
@@ -201,11 +204,6 @@ int main( void )
 	prvSetupHardware();
 	int i=0;
 	
-	
-	for(i=0; i<2; i++)	{
-	//	led_blink();
-	}
-	
 	//vTaskDelay(2000);
 	
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
@@ -216,16 +214,27 @@ int main( void )
     //xTaskCreate( vuIP_Task, ( signed portCHAR * ) "uIP", mainBASIC_WEB_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
 
 	/* Start the standard demo tasks. */
-	//vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );			// mainBLOCK_Q_PRIORITY = tskIDLE_PRIORITY + 2 = 
+	vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );			// mainBLOCK_Q_PRIORITY = tskIDLE_PRIORITY + 2 = 
 		//	ada di Common/Minimal/BlockQ.c
     //vCreateBlockTimeTasks();		// 
 		//	ada di Common/Minimal/blocktim.c
-
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
+	#if 0
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led2",  (configMINIMAL_STACK_SIZE * 2) ,\
+		 NULL, mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led );
+	#endif
+	
+	#if 1
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE, NULL, \
+		mainCHECK_TASK_PRIORITY, NULL );
 		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	#endif
 	
+	#if 1
+	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE, NULL, \
+		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );
+		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	#endif
 
-	
     //vStartLEDFlashTasks( mainFLASH_PRIORITY );					// mainFLASH_PRIORITY	= tskIDLE_PRIORITY + 2 = 
 		//	xTaskCreate( vLEDFlashTask, ....) ada di Common/Minimal/flash.c
     //vStartGenericQueueTasks( mainGEN_QUEUE_TASK_PRIORITY );		// mainGEN_QUEUE_TASK_PRIORITY = tskIDLE_PRIORITY
@@ -241,7 +250,7 @@ int main( void )
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 		// ada di source/tasks.c
-
+	//loop_led();
     /* Will only get here if there was insufficient memory to create the idle task. */
 	return 0; 
 }
@@ -299,31 +308,29 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 #endif
 /*-----------------------------------------------------------*/
 
-int tog;
-void togle_led_utama(void)	{
-	//printf("debound 8 : %d, relay 8 : %s\r\n", debound[7], (data_f[(JML_SUMBER*PER_SUMBER)+7])?"Aktif":"Mati");
-	if (tog)	{
-		FIO0SET = BIT(27);
-		tog = 0;
-	}	else	{
-		FIO0CLR = BIT(27);
-		tog = 1;
-	}
-}
-
 void vLedTask( void *pvParameters )
 {
-	dummy_del(4);
-	led_blink();
-	dummy_del(4);
-	for( ;; )
-	{
-		led_blink();
-		//vTaskDelay(500);
+	//
+		
+	for( ;; )	{
+		FIO0CLR = BIT(27);
+		vTaskDelay(100);
+		FIO0SET = BIT(27);
+		vTaskDelay(100);
 	}
-
 }
 
+void vLedTask2( void *pvParameters )
+{
+	//
+		
+	for( ;; )	{
+		FIO1CLR = BIT(18);
+		vTaskDelay(300);
+		FIO1SET = BIT(18);
+		vTaskDelay(300);
+	}
+}
 
 /*-----------------------------------------------------------*/
 
@@ -333,7 +340,7 @@ static void prvSetupHardware( void )
 		/* Remap the interrupt vectors to RAM if we are are running from RAM. */
 		SCB_MEMMAP = 2;
 	#else
-		MEMMAP = 0x01;
+		
 	#endif
 	
 	/* Disable the PLL. */
@@ -375,7 +382,7 @@ static void prvSetupHardware( void )
 	PLL used.  It is possible faster overall performance could be obtained by
 	tuning the MAM and PLL settings.
 	*/
-	#if 0
+	#if 1
 	MAMCR = 0;
 	//MAMTIM = mainMAM_TIM_3;			// MAMTIM=1 --> 20MHz, MAMTIM=2 --> 40MHz, MAMTIM=3 >40MHz, MAMTIM=4 >=60MHz
 	MAMTIM = mainMAM_TIM_4;				// 
