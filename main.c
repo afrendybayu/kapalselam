@@ -23,66 +23,10 @@
      *                                                                       *
     ***************************************************************************
 
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation AND MODIFIED BY the FreeRTOS exception.
-
-    >>>>>>NOTE<<<<<< The modification to the GPL is included to allow you to
-    distribute a combined work that includes FreeRTOS without being obliged to
-    provide the source code for proprietary components outside of the FreeRTOS
-    kernel.
-
-    FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-    details. You should have received a copy of the GNU General Public License
-    and the FreeRTOS license exception along with FreeRTOS; if not itcan be
-    viewed here: http://www.freertos.org/a00114.html and also obtained by
-    writing to Real Time Engineers Ltd., contact details for whom are available
-    on the FreeRTOS WEB site.
-
-    1 tab == 4 spaces!
-
-    ***************************************************************************
-     *                                                                       *
-     *    Having a problem?  Start by reading the FAQ "My application does   *
-     *    not run, what could be wrong?"                                     *
-     *                                                                       *
-     *    http://www.FreeRTOS.org/FAQHelp.html                               *
-     *                                                                       *
-    ***************************************************************************
-
-
-    http://www.FreeRTOS.org - Documentation, books, training, latest versions, 
-    license and Real Time Engineers Ltd. contact details.
-
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool, and our new
-    fully thread aware and reentrant UDP/IP stack.
-
-    http://www.OpenRTOS.com - Real Time Engineers ltd license FreeRTOS to High 
-    Integrity Systems, who sell the code with commercial support, 
-    indemnification and middleware, under the OpenRTOS brand.
-    
-    http://www.SafeRTOS.com - High Integrity Systems also provide a safety 
-    engineered and independently SIL3 certified version for use in safety and 
-    mission critical applications that require provable dependability.
 */
 
 /*
- * Creates all the demo application tasks, then starts the scheduler.  The WEB
- * documentation provides more details of the standard demo application tasks.
- * In addition to the standard demo tasks, the following tasks and tests are
- * defined and/or created within this file:
- *
- * "LCD" task - the LCD task is a 'gatekeeper' task.  It is the only task that
- * is permitted to access the display directly.  Other tasks wishing to write a
- * message to the LCD send the message on a queue to the LCD task instead of
- * accessing the LCD themselves.  The LCD task just blocks on the queue waiting
- * for messages - waking and displaying the messages as they arrive.
+
  *
  * "Check" hook -  This only executes every five seconds from the tick hook.
  * Its main function is to check that all the standard demo tasks are still 
@@ -123,42 +67,6 @@
 #define mainGEN_QUEUE_TASK_PRIORITY			( tskIDLE_PRIORITY ) 
 #define configTIMER_TASK_PRIORITY			( tskIDLE_PRIORITY + 1 )
 
-//#define mainCOM_TEST_PRIORITY				( tskIDLE_PRIORITY + 2 )
-//#define mainCOM_TEST_BAUD_RATE				( ( unsigned long ) 115200 )
-#define mainCOM_TEST_LED		( 3 )
-
-
-/* Constants to setup the PLL. */
-// Untuk mendapat 60 Mhz ==> PLL Setting Fcco=480MHz, M=60, N=1. Hal 58 Contoh Setting PLL 
-//#define mainPLL_MUL			( ( unsigned portLONG ) ( 8 - 1 ) )
-#if 0
-#define PLL_MUL				60
-#define mainPLL_MUL			( ( unsigned portLONG ) ( PLL_MUL - 1 ) )
-
-//#define mainPLL_DIV			( ( unsigned portLONG ) 0x0000 )
-#define PLL_DIV				1
-#define mainPLL_DIV			( ( unsigned portLONG ) (PLL_DIV - 1) )
-
-//#define mainCPU_CLK_DIV		( ( unsigned portLONG ) 0x0003 )
-#define CLK_DIV				8
-#define mainCPU_CLK_DIV		( ( unsigned portLONG ) (CLK_DIV-1) )
-#define mainPLL_ENABLE		( ( unsigned portLONG ) 0x0001 )
-#define mainPLL_CONNECT		( ( ( unsigned portLONG ) 0x0002 ) | mainPLL_ENABLE )
-#define mainPLL_FEED_BYTE1	( ( unsigned portLONG ) 0xaa )
-#define mainPLL_FEED_BYTE2	( ( unsigned portLONG ) 0x55 )
-#define mainPLL_LOCK		( ( unsigned portLONG ) 0x4000000 )
-#define mainPLL_CONNECTED	( ( unsigned portLONG ) 0x2000000 )
-#define mainOSC_ENABLE		( ( unsigned portLONG ) 0x20 )
-#define mainOSC_STAT		( ( unsigned portLONG ) 0x40 )
-#define mainOSC_SELECT		( ( unsigned portLONG ) 0x01 )			// Kristal External 
-#define intRC_SELECT		( ( unsigned portLONG ) 0x00 )			// Internal RC	==> CANnet jangan pakai ini
-#define RTC_SELECT			( ( unsigned portLONG ) 0x10 )			// RTC
-
-/* Constants to setup the MAM. */
-#define mainMAM_TIM_3		( ( unsigned portCHAR ) 0x03 )
-#define mainMAM_TIM_4		( ( unsigned portCHAR ) 0x04 )
-#define mainMAM_MODE_FULL	( ( unsigned portCHAR ) 0x02 )
-#endif
 /* 
  * The task that handles the uIP stack.  All TCP/IP processing is performed in
  * this task.
@@ -206,58 +114,27 @@ void loop_led()		{
 int main( void )	{
 
 	setup_hardware();
-	init_hardware();
+
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*4, NULL, \
+		mainCHECK_TASK_PRIORITY, NULL );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	
+	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE, NULL, \
+		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+
+
+	init_hardware();
+
 	//loop_led();
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
-	//xLCDQueue = xQueueCreate( mainQUEUE_SIZE, sizeof( xLCDMessage ) );
-
-	/* Create the uIP task.  This uses the lwIP RTOS abstraction layer.*/
-    //xTaskCreate( vuIP_Task, ( signed portCHAR * ) "uIP", mainBASIC_WEB_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
 
 	/* Start the standard demo tasks. */
-	//vStartIntegerMathTasks( tskIDLE_PRIORITY );
 	//vStartComTestStringsTasks(mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
-	//vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE );
-		//  ada di minimal/comtest.c
-	//vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );			// mainBLOCK_Q_PRIORITY = tskIDLE_PRIORITY + 2 = 
-		//	ada di Common/Minimal/BlockQ.c
-    //vCreateBlockTimeTasks();		// 
-		//	ada di Common/Minimal/blocktim.c
-	#if 0
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led2",  (configMINIMAL_STACK_SIZE * 2) ,\
-		 NULL, mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led );
-	#endif
-	
-	#if 1
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*4, NULL, \
-		mainCHECK_TASK_PRIORITY, NULL );
-		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
-	#endif
-	
-	#if 1
-	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE, NULL, \
-		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );
-		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
-	#endif
 
-    //vStartLEDFlashTasks( mainFLASH_PRIORITY );					// mainFLASH_PRIORITY	= tskIDLE_PRIORITY + 2 = 
-		//	xTaskCreate( vLEDFlashTask, ....) ada di Common/Minimal/flash.c
-    //vStartGenericQueueTasks( mainGEN_QUEUE_TASK_PRIORITY );		// mainGEN_QUEUE_TASK_PRIORITY = tskIDLE_PRIORITY
-		//	ada di Common/Minimal/GenQTest.c
-    //vStartQueuePeekTasks();					// vTaskSuspend, vTaskResume --> diaktifin malah ngehang
-		// ada di Common/Minimal/QPeek.c
-    //vStartDynamicPriorityTasks();
-		// ada di Common/Minimal/dinamic.c
-
-	/* Start the tasks defined within this file/specific to this demo. */
-	//xTaskCreate( vLCDTask, ( signed portCHAR * ) "LCD", configMINIMAL_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 		// ada di source/tasks.c
-	//loop_led();
     /* Will only get here if there was insufficient memory to create the idle task. */
 	return 0; 
 }
@@ -327,6 +204,7 @@ void vLedTask( void *pvParameters )	{
 		FIO1SET |= BIT(0);
 		//FIO1SET |= BIT(0) | BIT(8);
 		vTaskDelay(500);
+		pll_feed();
 //		qsprintf("%d kirim .....%d\r\n", a, a++);
 	}
 }

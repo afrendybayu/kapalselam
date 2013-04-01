@@ -5,7 +5,7 @@
 
 /* Scheduler include files. */
 
-#include <stdio.h>
+//#include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -15,6 +15,9 @@
 #include "sh_serial.h"
 #include <stdarg.h>
 #include "queue.h"
+#include "hardware.h"
+
+#include "sh_hardware.c"
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
@@ -33,6 +36,7 @@ void printd(int prio, const char *format, ...)	{
 	}
 }
 
+// qrprintf : custom printf yg dapat menyimpan data ke queue
 void qsprintf(char *fmt, ...) {
 	//uprintf("---> KIRIM : ");
 	char str_buffer[128];
@@ -45,6 +49,7 @@ void qsprintf(char *fmt, ...) {
     //uprintf(" %d/%d >>>>> %s\r\n", lg, xPrintQueue, str_buffer);
 }
 
+// qrprintf : custom printf yg dapat mengambil data dari queue
 void qrprintf(portTickType w) {
 	char hsl=0;
 	if (xPrintQueue != 0)	{
@@ -58,27 +63,25 @@ void qrprintf(portTickType w) {
 	//vTaskDelay(5);
 }
 
+// uprintf : user/custom printf ke serial debug
 void uprintf(char *fmt, ...) {
 	char str_buffer[128];
 	int lg=0;
     va_list args;
     va_start(args, fmt);
     lg = vsprintf(str_buffer, fmt, args);
-    vSerialPutString(xPort, str_buffer, lg);
     va_end(args);
-	vTaskDelay(2);
+    vSerialPutString(xPort, str_buffer, lg);
+	vTaskDelay(20);
 }
 #endif
 
 void vAltStartComTestTasks( unsigned portBASE_TYPE uxPriority, unsigned long ulBaudRate )		{
 	/* Initialise the com port then spawn the Rx and Tx tasks. */
-	
-	
 	xSerialPortInitMinimal( ulBaudRate, configMINIMAL_STACK_SIZE );
 
 	/* The Tx task is spawned with a lower priority than the Rx task. */
-	//xTaskCreate( vComTxTask, ( signed char * ) "COMTx", comSTACK_SIZE, NULL, uxPriority - 1, ( xTaskHandle * ) NULL );
-	xTaskCreate( vComRxTask, ( signed char * ) "COMRx", comSTACK_SIZE * 10, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
+	xTaskCreate( vComRxTask, ( signed char * ) "COMRx", comSTACK_SIZE * 15, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
 }
 
 void init_banner()	{
@@ -93,24 +96,10 @@ const unsigned portBASE_TYPE uxQueueSize = 10;
 	uprintf("CPU LPC 2387, %d MHz\r\n", configCPU_CLOCK_HZ/1000000);
 	uprintf("FreeRTOS %s\r\n", tskKERNEL_VERSION_NUMBER);		//  oleh Richard Barry
 	uprintf("ARM-GCC %s : %s : %s\r\n", __VERSION__, __DATE__, __TIME__);
-	//vTaskDelay(500);
-	//uprintf("xPrintQueue: %d\r\n\r\n", xPrintQueue);	printf("xPrintQueue: %d", xPrintQueue);
-
-
-	#if 0
-	//if ( xPrintQueue != 0 )	{
-		if ( xQueueReceive( xPrintQueue, &s, ( portTickType ) 0 ) )       {
-			printf("masuk ...");
-			printf("isi: %d %s\r\n", xPrintQueue, s );
-        } else {
-			printf("keluar ...\r\n");
-		}
-	//}
-	vTaskDelay(100);
-	#endif
+	
 }
 
-#if 1
+#if 0
 static void display_args(int argc, char **argv)	{
 	int i;
 	for(i=0;i<argc;i++)
@@ -133,6 +122,13 @@ static void atoxi_fnt(int argc, char **argv)	{
 	}
 }
 #endif
+
+void cmd_shell()	{
+	tinysh_add_command(&myfoocmd);
+
+	tinysh_add_command(&reset_cmd);
+}
+
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{
 signed char cExpectedByte, cByteRxed;
 portBASE_TYPE xResyncRequired = pdFALSE, xErrorOccurred = pdFALSE;
@@ -147,7 +143,7 @@ char s[128];
 	//vTaskDelay(1000);
 
 	
-	tinysh_add_command(&myfoocmd);
+	cmd_shell();
 	
 	sprintf(s, "%s$ ", PROMPT);
 	tinysh_set_prompt(s);
@@ -157,11 +153,13 @@ char s[128];
 	for( ;; )	{
 		vTaskDelay(2);
 		#if 1
-		xGotChar = xSerialGetChar( xPort, &ch, 100 );
+		xGotChar = xSerialGetChar( xPort, &ch, 1000 );
 		if( xGotChar == pdTRUE )		{
 
 			//if( xSerialGetChar( xPort, &ch, comRX_BLOCK_TIME ) )		{ // comRX_BLOCK_TIME = 0xffff
+			
 			tinysh_char_in((unsigned char) ch);
+			FIO1PIN ^= LED_UTAMA;
 			//xSerialPutChar( xPort, cByteRxed, comTX_BLOCK_TIME);
 			//xSerialPutChar( xPort, (signed char) ch, 10000);
 		}

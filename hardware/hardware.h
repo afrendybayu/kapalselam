@@ -9,6 +9,7 @@
 
 void setup_hardware();
 void init_hardware();
+void gpio_init();
 
 #ifdef BOARD_SANTER
 	#ifdef BOARD_SANTER_v1_0
@@ -58,13 +59,13 @@ void init_hardware();
 		#endif
 		
 		#ifdef PAKAI_SHELL
-			#define mainTX_ENABLE	( ( unsigned long ) 0x0001 )
-			#define mainRX_ENABLE	( ( unsigned long ) 0x0004 )
+			#define mainTX_ENABLE	( ( unsigned long ) 0x00010 )
+			#define mainRX_ENABLE	( ( unsigned long ) 0x00040 )
 			
 			#define mainCOM_TEST_PRIORITY		( tskIDLE_PRIORITY + 2 )
 			#define mainCOM_TEST_BAUD_RATE		( ( unsigned long ) 115200 )
 			
-			#define setup_serial_P0()	do {				\
+			#define setup_serial0_P0()	do {				\
 						PINSEL0 |= mainTX_ENABLE | mainRX_ENABLE;	\
 					} while(0)
 		#endif

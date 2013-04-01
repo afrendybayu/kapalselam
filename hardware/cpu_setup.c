@@ -4,30 +4,12 @@
 
 
 void sysInit()	{
-	// paksa PINSEL untuk GPIO //
-	PINSEL0 = 0x00000000;
-	PINSEL1 = 0x00000000;
-	PINSEL2 = 0x00000000;
-	PINSEL3 = 0x00000000;
-	PINSEL4 = 0x00000000;
-	PINSEL5 = 0x00000000;
-	PINSEL6 = 0x00000000;
-	PINSEL7 = 0x00000000;
-	PINSEL8 = 0x00000000;
-	PINSEL9 = 0x00000000;
-	PINSEL10 = 0x00000000;
-	
-	
-	// paksa untuk enable pull up //
-	PINMODE0 = 0x00000000;
-	PINMODE1 = 0x00000000;
-	PINMODE2 = 0x00000000;
-	PINMODE3 = 0x00000000;
-	PINMODE4 = 0x00000000;
-	PINMODE5 = 0x00000000;
-	PINMODE6 = 0x00000000;
-	PINMODE7 = 0x00000000;
-	PINMODE8 = 0x00000000;
+	#ifdef RUN_FROM_RAM
+		/* Remap the interrupt vectors to RAM if we are are running from RAM. */
+		SCB_MEMMAP = 2;
+	#else
+		
+	#endif
 	
 	// Disable the PLL. //
 	PLLCON = 0;							// 0 = PLL dimatikan dulu
@@ -74,4 +56,29 @@ void sysInit()	{
 	MAMTIM = mainMAM_TIM_4;				// 
 	MAMCR = mainMAM_MODE_FULL;
 	#endif
+}
+
+void setup_watchdog(void)		{
+	WDCLKSEL = 0;				// internal clock 4 MHz
+	WDTC = WDOG_TO_RESET;
+	WDMOD = WDEN | WDRESET;
+	
+	// start the watchdog
+	pll_feed();
+}
+
+void reset_cpu(void)		{
+	uprintf("... reset cpu ...\r\n");
+	
+	//WDTC = 125000;				// 500ms
+	WDTC = 300;				// 500ms
+	WDMOD = WDEN | WDRESET;		// 0x03;
+	pll_feed();
+}
+
+inline void pll_feed(void)	{
+	// harusnya saat ini interupt disable
+	// tapi masak tidak ada yang sukses di tendang tiap detik
+	WDFEED = mainPLL_FEED_BYTE1;
+	WDFEED = mainPLL_FEED_BYTE2;
 }

@@ -5,6 +5,14 @@
 #include "FreeRTOS.h"
 
 void sysInit();
+void setup_watchdog(void);
+void reset_cpu(void);
+inline void pll_feed(void);
+
+#define WDOG_TO_RESET	(1000000 * 15)		// 4/4 MHz * 15 detik //
+#define WDEN	BIT(0)
+#define WDRESET BIT(1)
+
 
 #define PLL_MUL				60
 #define mainPLL_MUL			( ( unsigned portLONG ) ( PLL_MUL - 1 ) )
