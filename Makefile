@@ -51,19 +51,22 @@
 #    licensing and training services.
 #*/
 
+NAMA_FILE=rtosdemo
+
+
 PENULIS=../../../../../../atinom/modul/Penulis/lpc_dbe
-NAMA_FILE=RTOSDemo
-RTOS_SOURCE_DIR=source
-DEMO_COMMON_DIR=minimal
-DEMO_INCLUDE_DIR=includ
+RTOS_SOURCE_DIR=modul/source
+DEMO_COMMON_DIR=modul/minimal
+DEMO_INCLUDE_DIR=modul/includ
 UIP_COMMON_DIR=../../Common/ethernet/uIP/uip-1.0/uip
 GCC=../../../../../../atinom/modul/TOOLCHAIN/bin/
 CC=$(GCC)arm-elf-gcc
 #CC=arm-elf-gcc
 OBJCOPY=$(GCC)arm-elf-objcopy
-LDSCRIPT=lpc2368.ld
+UKURAN=$(GCC)arm-elf-size
+LDSCRIPT=hardware/lpc2368.ld
 
-LINKER_FLAGS=-mthumb -nostartfiles -Xlinker -o$(NAMA_FILE).elf -Xlinker -M -Xlinker -Map=rtosdemo.map
+LINKER_FLAGS=-mthumb -nostartfiles -Xlinker -o$(NAMA_FILE).elf -Xlinker -M -Xlinker -Map=hasil/$(NAMA_FILE).map
 
 DEBUG=-g
 OPTIM=-O0		
@@ -74,6 +77,8 @@ CFLAGS= $(DEBUG) \
 		$(OPTIM) \
 		-T$(LDSCRIPT) \
 		-I . \
+		-I ./modul \
+		-I ./hardware \
 		-I $(RTOS_SOURCE_DIR)/include \
 		-I $(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx \
 		-I $(DEMO_INCLUDE_DIR) \
@@ -89,41 +94,50 @@ CFLAGS= $(DEBUG) \
 #		-I $(UIP_COMMON_DIR) \
 #		-I ./webserver \
 #		-fno-dwarf2-cfi-asm \
-		
+
+
+
 THUMB_SOURCE= \
 		main.c \
-		./ParTest/ParTest.c \
+		hardware/hardware.c		\
+		hardware/cpu_setup.c	\
 		$(DEMO_COMMON_DIR)/flash.c \
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/port.c \
 		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
-		syscalls.c		\
+		hardware/syscalls.c		\
 		$(DEMO_COMMON_DIR)/BlockQ.c \
-#		$(DEMO_COMMON_DIR)/blocktim.c \
-#		$(DEMO_COMMON_DIR)/integer.c \
-#		$(DEMO_COMMON_DIR)/GenQTest.c \
-#		$(DEMO_COMMON_DIR)/QPeek.c \
-#		$(DEMO_COMMON_DIR)/dynamic.c \
+		$(DEMO_COMMON_DIR)/integer.c \
+		hardware/ParTest.c \
+
+SERIAL_SOURCE=	\
+		cmd/sh_serial.c			\
+		modul/serial/serial.c 	\
+		modul/serial/tinysh.c		\
+#		$(DEMO_COMMON_DIR)/comtest.c \
+
+THUMB_SOURCE += $(SERIAL_SOURCE)
 
 ARM_SOURCE= \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/portISR.c \
+		modul/serial/serialISR.c
 
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)
 
 
-all: RTOSDemo.bin
+all: RTOSDemo.bin sizebefore
 
 RTOSDemo.bin : RTOSDemo.hex
-	$(OBJCOPY) RTOSDemo.elf -O binary RTOSDemo.bin
+	$(OBJCOPY) $(NAMA_FILE).elf -O binary hasil/$(NAMA_FILE).bin
 	 
 RTOSDemo.hex : RTOSDemo.elf
-	$(OBJCOPY) RTOSDemo.elf -O ihex RTOSDemo.hex
+	$(OBJCOPY) $(NAMA_FILE).elf -O ihex $(NAMA_FILE).hex
 
-RTOSDemo.elf : $(THUMB_OBJS) $(ARM_OBJS) boot.s Makefile
-	$(CC) $(CFLAGS) $(ARM_OBJS) $(THUMB_OBJS) $(LIBS) boot.s $(LINKER_FLAGS) 
+RTOSDemo.elf : $(THUMB_OBJS) $(ARM_OBJS) hardware/boot.s Makefile
+	$(CC) $(CFLAGS) $(ARM_OBJS) $(THUMB_OBJS) $(LIBS) hardware/boot.s $(LINKER_FLAGS)
 
 $(THUMB_OBJS) : %.o : %.c Makefile FreeRTOSConfig.h
 	$(CC) -c $(CFLAGS) -mthumb $< -o $@
@@ -134,17 +148,26 @@ $(ARM_OBJS) : %.o : %.c Makefile FreeRTOSConfig.h
 clean :
 	rm $(THUMB_OBJS)
 	rm $(ARM_OBJS)
-	rm RTOSDemo.elf
-	rm RTOSDemo.bin
-	rm RTOSDemo.hex
+	rm $(NAMA_FILE).elf
+	rm hasil/$(NAMA_FILE).bin
+	rm $(NAMA_FILE).hex
+	rm hasil/$(NAMA_FILE).map
 #	touch Makefile
 
 tulis:
-	sudo $(PENULIS) -hex RTOSDemo.hex /dev/ttyUSB0 115200 14748
+	sudo $(PENULIS) -hex $(NAMA_FILE).hex /dev/ttyUSB0 115200 14748
 
 tulis1 :
-	sudo $(PENULIS) -hex RTOSDemo.hex /dev/ttyUSB1 115200 14748
-	
+	sudo $(PENULIS) -hex $(NAMA_FILE).hex /dev/ttyUSB1 115200 14748
+
+
+MSG_SIZE_BEFORE = Size before: 
+MSG_SIZE_AFTER = Size after:
+
+HEXSIZE = $(UKURAN) --target=$(FORMAT) $(NAMA_FILE).hex
+ELFSIZE = $(UKURAN) -A $(NAMA_FILE).elf
+sizebefore:
+	@if [ -f $(NAMA_FILE).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
 	
 	
 

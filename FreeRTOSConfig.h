@@ -90,6 +90,13 @@
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
+#define PROMPT				"Kampul"
+#define BOARD_SANTER
+#define BOARD_SANTER_v1_0
+
+#define PAKAI_LED_UTAMA
+#define PAKAI_SHELL
+
 /* Value to use on old rev '-' devices. */
 #define configPINSEL2_VALUE	0x50151105
 
@@ -100,7 +107,8 @@
 	#error Please uncomment one of the two configPINSEL2_VALUE definitions above, depending on the revision of the LPC2000 device being used.
 #endif
 
-#define configUSE_PREEMPTION		0
+//#define configUSE_TIMERS			1
+#define configUSE_PREEMPTION		0		// 0/1 bisa semua.
 #define configUSE_IDLE_HOOK         0
 #define configUSE_TICK_HOOK         0
 //#define configCPU_CLOCK_HZ          ( ( unsigned long ) 48000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
@@ -108,7 +116,7 @@
 #define configTICK_RATE_HZ          ( ( portTickType ) 1000 )
 #define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 4 )
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 104 )
-#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 18 * 1024 ) )
+#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 24 * 1024 ) )
 #define configMAX_TASK_NAME_LEN		( 10 )
 #define configUSE_TRACE_FACILITY	0
 #define configUSE_16_BIT_TICKS		0
@@ -127,7 +135,7 @@ to exclude the API function. */
 #define INCLUDE_uxTaskPriorityGet           0
 #define INCLUDE_vTaskDelete                 0
 #define INCLUDE_vTaskCleanUpResources       0
-#define INCLUDE_vTaskSuspend                0
+#define INCLUDE_vTaskSuspend                1
 #define INCLUDE_vTaskDelayUntil             0
 #define INCLUDE_vTaskDelay                  1
 #define INCLUDE_xTaskGetCurrentTaskHandle	0

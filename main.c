@@ -102,15 +102,12 @@
 #include "semphr.h"
 
 /* Demo app includes. */
-//#include "BlockQ.h"
-//#include "death.h"
-//#include "blocktim.h"
 //#include "LCD/portlcd.h"
-//#include "flash.h"
-#include "partest.h"
-//#include "GenQTest.h"
-//#include "QPeek.h"
-//#include "dynamic.h"
+#include "flash.h"
+#include "cmd/sh_serial.h"
+
+//#define mainTX_ENABLE	( ( unsigned long ) 0x0001 )
+//#define mainRX_ENABLE	( ( unsigned long ) 0x0004 )
 
 /* Demo application definitions. */
 #define mainQUEUE_SIZE						( 3 )
@@ -124,10 +121,17 @@
 #define mainFLASH_PRIORITY                  ( tskIDLE_PRIORITY + 2 )
 #define mainCREATOR_TASK_PRIORITY           ( tskIDLE_PRIORITY + 3 )
 #define mainGEN_QUEUE_TASK_PRIORITY			( tskIDLE_PRIORITY ) 
+#define configTIMER_TASK_PRIORITY			( tskIDLE_PRIORITY + 1 )
+
+//#define mainCOM_TEST_PRIORITY				( tskIDLE_PRIORITY + 2 )
+//#define mainCOM_TEST_BAUD_RATE				( ( unsigned long ) 115200 )
+#define mainCOM_TEST_LED		( 3 )
+
 
 /* Constants to setup the PLL. */
 // Untuk mendapat 60 Mhz ==> PLL Setting Fcco=480MHz, M=60, N=1. Hal 58 Contoh Setting PLL 
 //#define mainPLL_MUL			( ( unsigned portLONG ) ( 8 - 1 ) )
+#if 0
 #define PLL_MUL				60
 #define mainPLL_MUL			( ( unsigned portLONG ) ( PLL_MUL - 1 ) )
 
@@ -154,7 +158,7 @@
 #define mainMAM_TIM_3		( ( unsigned portCHAR ) 0x03 )
 #define mainMAM_TIM_4		( ( unsigned portCHAR ) 0x04 )
 #define mainMAM_MODE_FULL	( ( unsigned portCHAR ) 0x02 )
-
+#endif
 /* 
  * The task that handles the uIP stack.  All TCP/IP processing is performed in
  * this task.
@@ -165,7 +169,7 @@ static void vLedTask( void *pvParameters );
 static void vLedTask2( void *pvParameters );
 
 /* Configure the hardware as required by the demo. */
-static void prvSetupHardware( void );
+//static void prvSetupHardware( void );
 
 /* The queue used to send messages to the LCD task. */
 //xQueueHandle xLCDQueue;
@@ -184,28 +188,26 @@ void dummy_del(int a)	{
 		}
 }
 
+void led_blink()	{
+	dummy_del(1);
+	FIO0CLR = BIT(27);
+	FIO1CLR = BIT(0);
+	dummy_del(1);
+	FIO0SET = BIT(27);
+	FIO1SET = BIT(0);
+}
+
 void loop_led()		{
 	while(1)	{
 		led_blink();
 	}
 }
 
-void led_blink()	{
-	dummy_del(1);
-	FIO0CLR = BIT(27);
-	//FIO1CLR = BIT(18);
-	dummy_del(1);
-	FIO0SET = BIT(27);
-	//FIO1SET = BIT(18);
-}
-
 int main( void )
 {
-	prvSetupHardware();
-	int i=0;
-	
-	//vTaskDelay(2000);
-	
+	//prvSetupHardware();
+	setup_hardware();
+	loop_led();
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
 	//xLCDQueue = xQueueCreate( mainQUEUE_SIZE, sizeof( xLCDMessage ) );
@@ -214,7 +216,11 @@ int main( void )
     //xTaskCreate( vuIP_Task, ( signed portCHAR * ) "uIP", mainBASIC_WEB_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
 
 	/* Start the standard demo tasks. */
-	vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );			// mainBLOCK_Q_PRIORITY = tskIDLE_PRIORITY + 2 = 
+	//vStartIntegerMathTasks( tskIDLE_PRIORITY );
+	//vStartComTestStringsTasks(mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
+	//vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE );
+		//  ada di minimal/comtest.c
+	//vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );			// mainBLOCK_Q_PRIORITY = tskIDLE_PRIORITY + 2 = 
 		//	ada di Common/Minimal/BlockQ.c
     //vCreateBlockTimeTasks();		// 
 		//	ada di Common/Minimal/blocktim.c
@@ -224,7 +230,7 @@ int main( void )
 	#endif
 	
 	#if 1
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE, NULL, \
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*4, NULL, \
 		mainCHECK_TASK_PRIORITY, NULL );
 		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	#endif
@@ -239,7 +245,7 @@ int main( void )
 		//	xTaskCreate( vLEDFlashTask, ....) ada di Common/Minimal/flash.c
     //vStartGenericQueueTasks( mainGEN_QUEUE_TASK_PRIORITY );		// mainGEN_QUEUE_TASK_PRIORITY = tskIDLE_PRIORITY
 		//	ada di Common/Minimal/GenQTest.c
-    //vStartQueuePeekTasks();
+    //vStartQueuePeekTasks();					// vTaskSuspend, vTaskResume --> diaktifin malah ngehang
 		// ada di Common/Minimal/QPeek.c
     //vStartDynamicPriorityTasks();
 		// ada di Common/Minimal/dinamic.c
@@ -308,31 +314,41 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 #endif
 /*-----------------------------------------------------------*/
 
-void vLedTask( void *pvParameters )
-{
+void vLedTask( void *pvParameters )	{
 	//
-		
+	char s[128];
+	int a = 0;
+	vTaskDelay(3000);
 	for( ;; )	{
-		FIO0CLR = BIT(27);
-		vTaskDelay(100);
-		FIO0SET = BIT(27);
-		vTaskDelay(100);
+		//FIO1CLR |= BIT(0) | BIT(8);
+		FIO1CLR |= BIT(0);
+		vTaskDelay(500);
+		FIO1SET |= BIT(0);
+		//FIO1SET |= BIT(0) | BIT(8);
+		vTaskDelay(500);
+//		qsprintf("%d kirim .....%d\r\n", a, a++);
 	}
 }
 
-void vLedTask2( void *pvParameters )
-{
+void vLedTask2( void *pvParameters )	{
 	//
-		
+	
 	for( ;; )	{
-		FIO1CLR = BIT(18);
+		FIO1CLR |= BIT(18);
 		vTaskDelay(300);
-		FIO1SET = BIT(18);
+		FIO1SET |= BIT(18);
 		vTaskDelay(300);
+		
 	}
 }
 
 /*-----------------------------------------------------------*/
+
+#if 0
+void init_serial()	{
+	PINSEL0 |= mainTX_ENABLE;
+	PINSEL0 |= mainRX_ENABLE;
+}
 
 static void prvSetupHardware( void )
 {
@@ -392,8 +408,10 @@ static void prvSetupHardware( void )
 	
 	/* Setup the led's on the MCB2300 board */
 	vParTestInitialise();
+	
+	init_serial();
 }
 
-
+#endif
 
 
