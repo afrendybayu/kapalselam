@@ -101,16 +101,15 @@ THUMB_SOURCE= \
 		main.c \
 		hardware/hardware.c		\
 		hardware/cpu_setup.c	\
+		hardware/syscalls.c		\
 		$(DEMO_COMMON_DIR)/flash.c \
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/port.c \
 		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
-		hardware/syscalls.c		\
 		$(DEMO_COMMON_DIR)/BlockQ.c \
 		$(DEMO_COMMON_DIR)/integer.c \
-		hardware/ParTest.c \
 
 SERIAL_SOURCE=	\
 		cmd/sh_serial.c			\

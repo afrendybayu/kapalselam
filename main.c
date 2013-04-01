@@ -203,11 +203,12 @@ void loop_led()		{
 	}
 }
 
-int main( void )
-{
-	//prvSetupHardware();
+int main( void )	{
+
 	setup_hardware();
-	loop_led();
+	init_hardware();
+	
+	//loop_led();
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
 	//xLCDQueue = xQueueCreate( mainQUEUE_SIZE, sizeof( xLCDMessage ) );
