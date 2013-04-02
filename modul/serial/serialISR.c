@@ -131,7 +131,8 @@ void vSerialISRCreateQueues(	unsigned portBASE_TYPE uxQueueLength, xQueueHandle 
 								xQueueHandle *pxCharsForTx, long volatile **pplTHREEmptyFlag )
 {
 	/* Create the queues used to hold Rx and Tx characters. */
-	xRxedChars = xQueueCreate( uxQueueLength, ( unsigned portBASE_TYPE ) sizeof( signed char ) );
+	//xRxedChars = xQueueCreate( uxQueueLength, ( unsigned portBASE_TYPE ) sizeof( signed char ) );
+	xRxedChars = xQueueCreate( 8, ( unsigned portBASE_TYPE ) sizeof( signed portCHAR ) );
 	xCharsForTx = xQueueCreate( uxQueueLength + 1, ( unsigned portBASE_TYPE ) sizeof( signed char ) );
 
 	/* Pass back a reference to the queues so the serial API file can 

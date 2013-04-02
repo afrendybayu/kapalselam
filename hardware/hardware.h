@@ -10,6 +10,10 @@
 void setup_hardware();
 void init_hardware();
 void gpio_init();
+void gpio_int_init();
+int setup_konter_onoff(unsigned int kanale, unsigned char statk);
+
+
 
 #ifdef BOARD_SANTER
 	#ifdef BOARD_SANTER_v1_0
@@ -69,6 +73,18 @@ void gpio_init();
 						PINSEL0 |= mainTX_ENABLE | mainRX_ENABLE;	\
 					} while(0)
 		#endif
+	
+		#define iKonter_1		BIT(5) 	// P25, konter_1
+		#define iKonter_2		BIT(6)	// P26
+		#define iKonter_3		BIT(7)	// P27
+		#define iKonter_4		BIT(8)	// P28
+		#define iKonter_5		BIT(9)	// P29
+		
+		#define iKonter_6		BIT(24)	// P024, konter_6
+		#define iKonter_7		BIT(25)	// P025
+		#define iKonter_8		BIT(26)	// P026
+		#define iKonter_9		BIT(28)	// P027
+		#define iKonter_10		BIT(28)	// P028
 	#endif
 #endif
 

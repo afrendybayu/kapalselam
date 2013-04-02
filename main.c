@@ -40,6 +40,7 @@
  */
 
 /* Scheduler includes. */
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -110,16 +111,20 @@ void loop_led()		{
 		led_blink();
 	}
 }
+xSemaphoreHandle xButtonSemaphore;
 
 int main( void )	{
 
 	setup_hardware();
 
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*4, NULL, \
-		mainCHECK_TASK_PRIORITY, NULL );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	vSemaphoreCreateBinary( xButtonSemaphore );		// xSemaphoreHandle xButtonSemaphore;
+	xSemaphoreTake( xButtonSemaphore, 0 );
+
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*10, NULL, \
+		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led1 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	
-	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE, NULL, \
-		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	//xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE*10, NULL, \
+	//	mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 
 
 	init_hardware();
@@ -194,7 +199,7 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 void vLedTask( void *pvParameters )	{
 	//
-	char s[128];
+	//char s[128];
 	int a = 0;
 	vTaskDelay(3000);
 	for( ;; )	{
@@ -205,7 +210,7 @@ void vLedTask( void *pvParameters )	{
 		//FIO1SET |= BIT(0) | BIT(8);
 		vTaskDelay(500);
 		pll_feed();
-//		qsprintf("%d kirim .....%d\r\n", a, a++);
+		qsprintf("%d-kirim-queue-%d\r\n", a, a++);
 	}
 }
 

@@ -16,8 +16,9 @@
 #include <stdarg.h>
 #include "queue.h"
 #include "hardware.h"
-
+#include <stdio.h>
 #include "sh_hardware.c"
+#include "sh_rtos.c"
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
@@ -51,13 +52,13 @@ void qsprintf(char *fmt, ...) {
 
 // qrprintf : custom printf yg dapat mengambil data dari queue
 void qrprintf(portTickType w) {
-	char hsl=0;
+	//char *str_buffer;
+char str_buffer[128];
 	if (xPrintQueue != 0)	{
-		char str_buffer[128];
-		hsl = xQueueReceive( xPrintQueue, &str_buffer, w );
-		if (hsl)	{
+		if (xQueueReceive( xPrintQueue, &str_buffer, w ))	{
 			//uprintf("PrintQueue: %d/%d__%s\r\n", xPrintQueue, strlen(str_buffer), str_buffer);
-			uprintf("%d__%s\r\n", strlen(str_buffer), str_buffer);
+			//uprintf("%d__%s\r\n", strlen(str_buffer), str_buffer);
+			vSerialPutString(xPort, str_buffer, strlen(str_buffer));
 		}
 	}
 	//vTaskDelay(5);
@@ -77,16 +78,21 @@ void uprintf(char *fmt, ...) {
 #endif
 
 void vAltStartComTestTasks( unsigned portBASE_TYPE uxPriority, unsigned long ulBaudRate )		{
+const unsigned portBASE_TYPE uxQueueSize = 5;
+const unsigned portBASE_TYPE uxQueueLength = 128;
+	xPrintQueue = xQueueCreate( uxQueueSize, uxQueueLength );
 	/* Initialise the com port then spawn the Rx and Tx tasks. */
 	xSerialPortInitMinimal( ulBaudRate, configMINIMAL_STACK_SIZE );
 
 	/* The Tx task is spawned with a lower priority than the Rx task. */
-	xTaskCreate( vComRxTask, ( signed char * ) "COMRx", comSTACK_SIZE * 15, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
+	xTaskCreate( vComRxTask, ( signed char * ) "COMRx", comSTACK_SIZE * 20, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
 }
 
 void init_banner()	{
-const unsigned portBASE_TYPE uxQueueSize = 10;
-	xPrintQueue = xQueueCreate( uxQueueSize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
+//const unsigned portBASE_TYPE uxQueueSize = 10;
+//const unsigned portBASE_TYPE uxQueueLength = 30;
+	//xPrintQueue = xQueueCreate( uxQueueSize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
+	//xPrintQueue = xQueueCreate( uxQueueSize, uxQueueLength );
 	//strcpy(s, "percobaan queue init_banner ...\r\n");
 	//xQueueSend( xPrintQueue, ( void * ) s, ( portTickType ) 10 );
 	//uprintf("xPrintQueue hasil queue: %d\r\n", xPrintQueue);
@@ -99,7 +105,7 @@ const unsigned portBASE_TYPE uxQueueSize = 10;
 	
 }
 
-#if 0
+#if PAKAI_CONTOH_SHELL
 static void display_args(int argc, char **argv)	{
 	int i;
 	for(i=0;i<argc;i++)
@@ -124,9 +130,11 @@ static void atoxi_fnt(int argc, char **argv)	{
 #endif
 
 void cmd_shell()	{
+	#ifdef PAKAI_CONTOH_SHELL
 	tinysh_add_command(&myfoocmd);
-
+	#endif
 	tinysh_add_command(&reset_cmd);
+	tinysh_add_command(&task_list_cmd);
 }
 
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{
@@ -134,7 +142,7 @@ signed char cExpectedByte, cByteRxed;
 portBASE_TYPE xResyncRequired = pdFALSE, xErrorOccurred = pdFALSE;
 portBASE_TYPE xGotChar;
 int ch;
-char s[128];
+char s[30];
 
 	/* Just to stop compiler warnings. */
 	( void ) pvParameters;
@@ -153,7 +161,7 @@ char s[128];
 	for( ;; )	{
 		vTaskDelay(2);
 		#if 1
-		xGotChar = xSerialGetChar( xPort, &ch, 1000 );
+		xGotChar = xSerialGetChar( xPort, &ch, 100 );
 		if( xGotChar == pdTRUE )		{
 
 			//if( xSerialGetChar( xPort, &ch, comRX_BLOCK_TIME ) )		{ // comRX_BLOCK_TIME = 0xffff
@@ -165,6 +173,6 @@ char s[128];
 		}
 		
 		#endif
-		//qrprintf(0);
+		qrprintf(0);
 	}
 }

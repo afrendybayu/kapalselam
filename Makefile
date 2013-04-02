@@ -79,6 +79,7 @@ CFLAGS= $(DEBUG) \
 		-I . \
 		-I ./modul \
 		-I ./hardware \
+		-I ./app		\
 		-I $(RTOS_SOURCE_DIR)/include \
 		-I $(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx \
 		-I $(DEMO_INCLUDE_DIR) \
@@ -121,7 +122,8 @@ THUMB_SOURCE += $(SERIAL_SOURCE)
 
 ARM_SOURCE= \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/portISR.c \
-		modul/serial/serialISR.c
+		modul/serial/serialISR.c	\
+		hardware/hwISR.c			\
 
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)

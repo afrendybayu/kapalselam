@@ -86,6 +86,13 @@ static portTASK_FUNCTION_PROTO( vComRxTask, pvParameters );
 
 void vAltStartComTestTasks( unsigned portBASE_TYPE uxPriority, unsigned long ulBaudRate );
 portBASE_TYPE xAreComTestTasksStillRunning( void );
+
+void init_banner();
+void cmd_shell();
+
+void qsprintf(char *fmt, ...);
+void qrprintf(portTickType w);
+void uprintf(char *fmt, ...);
 //void vComTestUnsuspendTask( void );
 
 #endif
