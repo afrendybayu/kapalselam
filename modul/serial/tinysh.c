@@ -54,8 +54,7 @@ typedef unsigned char uchar;
 
 static void help_fnt(int argc, char **argv);
 
-static tinysh_cmd_t help_cmd={
-  0,"help","display help","<cr>",help_fnt,0,0,0 };
+static tinysh_cmd_t help_cmd={  0,"help","display help","<cr>",help_fnt,0,0,0 };
 
 static uchar input_buffers[HISTORY_DEPTH][BUFFER_SIZE+1] = {0};
 static uchar trash_buffer[BUFFER_SIZE+1] ={0};
@@ -81,11 +80,10 @@ static void puts(char *s)
 {
 	while(*s)
 		putchar(*s++);
-	vTaskDelay(20);
+	vTaskDelay(5);
 }
 
-/* callback for help function
- */
+/* callback for help function */
 static void help_fnt(int argc, char **argv)
 {
   puts("?            display help on given or available commands\r\n");
@@ -306,7 +304,8 @@ static void display_child_help(tinysh_cmd_t *cmd)
         for(i=strlen(cm->name);i<len+2;i++)
           putchar(' ');
         puts(cm->help);
-        putchar('\n');
+        //putchar('\n');
+        puts("\r\n");
       }
 }
 
@@ -351,16 +350,18 @@ static int help_command_line(tinysh_cmd_t *cmd, uchar *_str)
         }
       else if(ret==AMBIG)
         {
-          puts("\nambiguity: ");
+          puts("\r\nambiguity: ");
           puts(str);
-          putchar('\n');
+          //putchar('\n');
+          puts("\r\n");
           return 0;
         }
       else if(ret==UNMATCH)
         {
-          puts("\nno match: ");
+          puts("\r\nno match: ");
           puts(str);
-          putchar('\n');
+          //putchar('\n');
+          puts("\r\n");
           return 0;
         }
       else /* NULLMATCH */
@@ -415,7 +416,8 @@ static int complete_command_line(tinysh_cmd_t *cmd, uchar *_str)
                       if(cmd->usage)
                         {
                           puts(cmd->usage);
-                          putchar('\n');
+                          //putchar('\n');
+                          puts("\r\n");
                           return 1;
                         }
                       else
@@ -450,14 +452,16 @@ static int complete_command_line(tinysh_cmd_t *cmd, uchar *_str)
             {
               if(_str_len==common_len)
                 {
-                  putchar('\n');
+                  //putchar('\n');
+                  puts("\r\n");
                   for(cm=cmd;cm;cm=cm->next)
                     {
                       int r=strstart(cm->name,__str);
                       if(r==FULLMATCH || r==PARTMATCH)
                         {
                           puts(cm->name);
-                          putchar('\n');
+                          //putchar('\n');
+                          puts("\r\n");
                         }
                     }
                   return 1;
@@ -594,6 +598,7 @@ static void _tinysh_char_in(uchar c)
           start_of_line();
           puts(line);
         }
+        //char buf[20];
       cur_index=strlen(line);
       //sprintf(buf, "cur_index: %d--\r\n", cur_index);
       //puts(buf);

@@ -73,7 +73,7 @@ void uprintf(char *fmt, ...) {
     lg = vsprintf(str_buffer, fmt, args);
     va_end(args);
     vSerialPutString(xPort, str_buffer, lg);
-	vTaskDelay(20);
+	vTaskDelay(5);
 }
 #endif
 

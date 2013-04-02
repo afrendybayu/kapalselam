@@ -123,8 +123,8 @@ int main( void )	{
 	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*10, NULL, \
 		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led1 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	
-	//xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE*10, NULL, \
-	//	mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE*10, NULL, \
+		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 
 
 	init_hardware();
