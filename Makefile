@@ -77,8 +77,9 @@ CFLAGS= $(DEBUG) \
 		$(OPTIM) \
 		-T$(LDSCRIPT) \
 		-I . \
-		-I ./modul \
-		-I ./hardware \
+		-I ./modul 		\
+		-I ./hardware 	\
+		-I ./cmd		 \
 		-I ./app		\
 		-I $(RTOS_SOURCE_DIR)/include \
 		-I $(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx \
@@ -103,20 +104,25 @@ THUMB_SOURCE= \
 		hardware/hardware.c		\
 		hardware/cpu_setup.c	\
 		hardware/syscalls.c		\
-		$(DEMO_COMMON_DIR)/flash.c \
+		cmd/sh_hardware.c		\
+		cmd/sh_rtos.c		\
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/port.c \
 		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_2.c \
-		$(DEMO_COMMON_DIR)/BlockQ.c \
-		$(DEMO_COMMON_DIR)/integer.c \
+#		$(DEMO_COMMON_DIR)/BlockQ.c \
+#		$(DEMO_COMMON_DIR)/integer.c \
+#		$(DEMO_COMMON_DIR)/flash.c \
+
+
 
 SERIAL_SOURCE=	\
 		cmd/sh_serial.c			\
 		modul/serial/serial.c 	\
 		modul/serial/tinysh.c		\
-#		$(DEMO_COMMON_DIR)/comtest.c \
+
+
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
 

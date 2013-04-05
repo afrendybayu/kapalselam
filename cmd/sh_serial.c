@@ -17,8 +17,8 @@
 #include "queue.h"
 #include "hardware.h"
 #include <stdio.h>
-#include "sh_hardware.c"
-#include "sh_rtos.c"
+#include "sh_hardware.h"
+#include "sh_rtos.h"
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;

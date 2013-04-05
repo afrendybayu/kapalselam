@@ -83,7 +83,6 @@ static void vLedTask2( void *pvParameters );
 /* The queue used to send messages to the LCD task. */
 //xQueueHandle xLCDQueue;
 xTaskHandle hdl_led1;
-xTaskHandle hdl_led2;
 
 /*-----------------------------------------------------------*/
 
@@ -106,11 +105,6 @@ void led_blink()	{
 	FIO1SET = BIT(0);
 }
 
-void loop_led()		{
-	while(1)	{
-		led_blink();
-	}
-}
 xSemaphoreHandle xButtonSemaphore;
 
 int main( void )	{
@@ -123,15 +117,8 @@ int main( void )	{
 	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*10, NULL, \
 		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led1 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	
-	xTaskCreate( vLedTask2, ( signed portCHAR * ) "Led2", configMINIMAL_STACK_SIZE*10, NULL, \
-		mainCHECK_TASK_PRIORITY, ( xTaskHandle * ) &hdl_led2 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
-
-
 	init_hardware();
 
-	//loop_led();
-	/* Create the queue used by the LCD task.  Messages for display on the LCD
-	are received via this queue. */
 
 	/* Start the standard demo tasks. */
 	//vStartComTestStringsTasks(mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
@@ -203,99 +190,12 @@ void vLedTask( void *pvParameters )	{
 	int a = 0;
 	vTaskDelay(3000);
 	for( ;; )	{
-		//FIO1CLR |= BIT(0) | BIT(8);
-		FIO1CLR |= BIT(0);
-		vTaskDelay(500);
-		FIO1SET |= BIT(0);
-		//FIO1SET |= BIT(0) | BIT(8);
-		vTaskDelay(500);
-		pll_feed();
-		qsprintf("%d-kirim-queue-%d\r\n", a, a++);
-	}
-}
-
-void vLedTask2( void *pvParameters )	{
-	//
-	
-	for( ;; )	{
 		FIO1CLR |= BIT(18);
 		vTaskDelay(300);
 		FIO1SET |= BIT(18);
 		vTaskDelay(300);
-		
+		pll_feed();
+		qsprintf("%d-kirim-queue-%d\r\n", a, a++);
 	}
 }
-
-/*-----------------------------------------------------------*/
-
-#if 0
-void init_serial()	{
-	PINSEL0 |= mainTX_ENABLE;
-	PINSEL0 |= mainRX_ENABLE;
-}
-
-static void prvSetupHardware( void )
-{
-	#ifdef RUN_FROM_RAM
-		/* Remap the interrupt vectors to RAM if we are are running from RAM. */
-		SCB_MEMMAP = 2;
-	#else
-		
-	#endif
-	
-	/* Disable the PLL. */
-	PLLCON = 0;							// 0 = PLL dimatikan dulu
-	PLLFEED = mainPLL_FEED_BYTE1;		// 0xAA
-	PLLFEED = mainPLL_FEED_BYTE2;		// 0x55
-	
-	/* Configure clock source. */				// SCS = system control dan status register 
-//	pakai internal RC saja
-//	SCS |= mainOSC_ENABLE;						// mainOSC_ENABLE = 0x20, Hal 42	==> Untuk Kristal External
-//	while( !( SCS & mainOSC_STAT ) );			// 
-//	CLKSRCSEL = mainOSC_SELECT; 				// mainOSC_SELECT = 0x01 ==> 
-	
-	/* Setup the PLL to multiply the XTAL input by 4. */
-	PLLCFG = ( mainPLL_MUL | mainPLL_DIV );		// set fcc jd 480 MHz
-	PLLFEED = mainPLL_FEED_BYTE1;
-	PLLFEED = mainPLL_FEED_BYTE2;
-
-	/* Turn on and wait for the PLL to lock... */
-	PLLCON = mainPLL_ENABLE;					// mainPLL_ENABLE = 0x01
-	PLLFEED = mainPLL_FEED_BYTE1;
-	PLLFEED = mainPLL_FEED_BYTE2;
-
-	CCLKCFG = mainCPU_CLK_DIV;					// mainCPU_CLK_DIV = 8
-	while( !( PLLSTAT & mainPLL_LOCK ) );
-	
-	/* Connecting the clock. */
-	PLLCON = mainPLL_CONNECT;					// mainPLL_CONNECT = 0x02 | 0x01
-	PLLFEED = mainPLL_FEED_BYTE1;
-	PLLFEED = mainPLL_FEED_BYTE2;
-	while( !( PLLSTAT & mainPLL_CONNECTED ) ); 
-	
-	/* 
-	This code is commented out as the MAM does not work on the original revision
-	LPC2368 chips.  If using Rev B chips then you can increase the speed though
-	the use of the MAM.
-	
-	Setup and turn on the MAM.  Three cycle access is used due to the fast
-	PLL used.  It is possible faster overall performance could be obtained by
-	tuning the MAM and PLL settings.
-	*/
-	#if 1
-	MAMCR = 0;
-	//MAMTIM = mainMAM_TIM_3;			// MAMTIM=1 --> 20MHz, MAMTIM=2 --> 40MHz, MAMTIM=3 >40MHz, MAMTIM=4 >=60MHz
-	MAMTIM = mainMAM_TIM_4;				// 
-	MAMCR = mainMAM_MODE_FULL;
-	#endif
-	//*/
-	
-	/* Setup the led's on the MCB2300 board */
-	vParTestInitialise();
-	
-	init_serial();
-}
-
-#endif
-
 
