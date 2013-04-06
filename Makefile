@@ -105,7 +105,9 @@ THUMB_SOURCE= \
 		hardware/cpu_setup.c	\
 		hardware/syscalls.c		\
 		cmd/sh_hardware.c		\
-		cmd/sh_rtos.c		\
+		cmd/sh_rtos.c			\
+		cmd/sh_data.c			\
+		app/rpm.c				\
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \

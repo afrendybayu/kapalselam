@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include "sh_hardware.h"
 #include "sh_rtos.h"
+#include "sh_data.h"
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
@@ -85,7 +86,7 @@ const unsigned portBASE_TYPE uxQueueLength = 128;
 	xSerialPortInitMinimal( ulBaudRate, configMINIMAL_STACK_SIZE );
 
 	/* The Tx task is spawned with a lower priority than the Rx task. */
-	xTaskCreate( vComRxTask, ( signed char * ) "COMRx", comSTACK_SIZE * 20, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
+	xTaskCreate( vComRxTask, ( signed char * ) "Shell", comSTACK_SIZE * 15, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
 }
 
 void init_banner()	{
@@ -135,6 +136,7 @@ void cmd_shell()	{
 	#endif
 	tinysh_add_command(&reset_cmd);
 	tinysh_add_command(&task_list_cmd);
+	tinysh_add_command(&cek_data_cmd);
 }
 
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{

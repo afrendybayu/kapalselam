@@ -48,8 +48,8 @@
 
 /* Demo app includes. */
 //#include "LCD/portlcd.h"
-#include "flash.h"
-#include "cmd/sh_serial.h"
+//#include "flash.h"
+//#include "cmd/sh_serial.h"
 
 //#define mainTX_ENABLE	( ( unsigned long ) 0x0001 )
 //#define mainRX_ENABLE	( ( unsigned long ) 0x0004 )
@@ -75,14 +75,14 @@
 
 
 static void vLedTask( void *pvParameters );
-static void vLedTask2( void *pvParameters );
+//static void vLedTask2( void *pvParameters );
 
 /* Configure the hardware as required by the demo. */
 //static void prvSetupHardware( void );
 
 /* The queue used to send messages to the LCD task. */
 //xQueueHandle xLCDQueue;
-xTaskHandle hdl_led1;
+xTaskHandle hdl_led;
 
 /*-----------------------------------------------------------*/
 
@@ -114,8 +114,8 @@ int main( void )	{
 	vSemaphoreCreateBinary( xButtonSemaphore );		// xSemaphoreHandle xButtonSemaphore;
 	xSemaphoreTake( xButtonSemaphore, 0 );
 
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*10, NULL, \
-		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led1 );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*2, NULL, \
+		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
 	
 	init_hardware();
 
@@ -187,15 +187,24 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 void vLedTask( void *pvParameters )	{
 	//
 	//char s[128];
-	int a = 0;
+	int a=0, b=0;
 	vTaskDelay(3000);
 	for( ;; )	{
+		#if 0
 		FIO1CLR |= BIT(18);
 		vTaskDelay(300);
 		FIO1SET |= BIT(18);
 		vTaskDelay(300);
-		pll_feed();
-		qsprintf("%d-kirim-queue-%d\r\n", a, a++);
+		#endif
+		
+		vTaskDelay(100);
+		a++;
+		if (a>5)	{
+			FIO1PIN ^= BIT(18);
+			pll_feed();
+			a=0;
+		}
+		//qsprintf("%d-kirim-queue-%d\r\n", b, b++);
 	}
 }
 

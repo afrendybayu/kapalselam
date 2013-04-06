@@ -71,6 +71,48 @@ void init_hardware()	{
 	#endif
 }
 
+int setup_konter_onoff(unsigned int aaa, unsigned char statk) {
+	//printf("\r\n aaa: %d, statk: %d\r\n", aaa, statk);
+	int bbb = 0;
+	if (statk==1) {
+		/*
+		if (aaa==0) {	IO2_INT_EN_R |= kont_1;		bbb = 101;	}
+		if (aaa==1) {	IO2_INT_EN_R |= kont_2;		bbb = 102;	}
+		//if (aaa==2) {	IO2_INT_EN_R |= kont_3;		bbb = 103;	}
+		if (aaa==3) {	IO2_INT_EN_R |= kont_4;		bbb = 104;	}
+		if (aaa==4) {	IO2_INT_EN_R |= kont_5;		bbb = 105;	}
+		if (aaa==5) {	IO2_INT_EN_R |= kont_6;		bbb = 106;	}
+		if (aaa==6) {	IO2_INT_EN_R |= kont_7;		bbb = 107;	}
+		if (aaa==7) {	IO2_INT_EN_R |= kont_8;		bbb = 108;	}
+		if (aaa==8) {	IO2_INT_EN_R |= kont_9;		bbb = 109;	}
+		if (aaa==9) {	IO2_INT_EN_R |= kont_10;	bbb = 110;	}
+		//*/
+	} else if (statk==3)	{
+		if (aaa==0) {	;	bbb = 201;	}
+		if (aaa==1) {	;	bbb = 202;	}
+		if (aaa==2) {	;	bbb = 203;	}
+		if (aaa==3) {	;	bbb = 204;	}
+		if (aaa==4) {	;	bbb = 205;	}
+		if (aaa==5) {	;	bbb = 206;	}
+		if (aaa==6) {	;	bbb = 207;	}
+		if (aaa==7) {	;	bbb = 208;	}
+		if (aaa==8) {	;	bbb = 209;	}
+		if (aaa==9) {	;	bbb = 210;	}
+	} else {
+		if (aaa==0) {	IO2_INT_EN_R &= ~iKonter_1;		bbb = 1;	}
+		if (aaa==1) {	IO2_INT_EN_R &= ~iKonter_2;		bbb = 2;	}
+		if (aaa==2) {	IO2_INT_EN_R &= ~iKonter_3;		bbb = 3;	}
+		if (aaa==3) {	IO2_INT_EN_R &= ~iKonter_4;		bbb = 4;	}
+		if (aaa==4) {	IO2_INT_EN_R &= ~iKonter_5;		bbb = 5;	}
+		if (aaa==5) {	IO2_INT_EN_R &= ~iKonter_6;		bbb = 6;	}
+		if (aaa==6) {	IO2_INT_EN_R &= ~iKonter_7;		bbb = 7;	}
+		if (aaa==7) {	IO2_INT_EN_R &= ~iKonter_8;		bbb = 8;	}
+		if (aaa==8) {	IO2_INT_EN_R &= ~iKonter_9;		bbb = 9;	}
+		if (aaa==9) {	IO2_INT_EN_R &= ~iKonter_10;	bbb = 10;	}
+		
+	}
+	return bbb;
+}
 
 void gpio_init()	{
 	// paksa PINSEL untuk GPIO //
