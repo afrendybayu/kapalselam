@@ -108,6 +108,7 @@ THUMB_SOURCE= \
 		cmd/sh_rtos.c			\
 		cmd/sh_data.c			\
 		app/rpm.c				\
+		app/ambilcepat.c		\
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
@@ -125,7 +126,6 @@ SERIAL_SOURCE=	\
 		modul/serial/tinysh.c		\
 
 
-
 THUMB_SOURCE += $(SERIAL_SOURCE)
 
 ARM_SOURCE= \
@@ -136,6 +136,7 @@ ARM_SOURCE= \
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)
 
+LIBS = -lc -lgcc -lm -Llib
 
 all: RTOSDemo.bin sizebefore
 

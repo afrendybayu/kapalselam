@@ -45,6 +45,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "monita.h"
 
 /* Demo app includes. */
 //#include "LCD/portlcd.h"
@@ -107,6 +108,9 @@ void led_blink()	{
 
 xSemaphoreHandle xButtonSemaphore;
 
+
+
+
 int main( void )	{
 
 	setup_hardware();
@@ -116,7 +120,7 @@ int main( void )	{
 
 	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*2, NULL, \
 		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
-	
+	init_ambilCepatTasks();
 	init_hardware();
 
 
@@ -184,11 +188,14 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 #endif
 /*-----------------------------------------------------------*/
 
+//extern volatile float data_f[];
+extern struct t2_konter konter;
+extern unsigned int giliran;
+
 void vLedTask( void *pvParameters )	{
-	//
-	//char s[128];
+
 	int a=0, b=0;
-	vTaskDelay(3000);
+	vTaskDelay(1000);
 	for( ;; )	{
 		#if 0
 		FIO1CLR |= BIT(18);
@@ -203,6 +210,9 @@ void vLedTask( void *pvParameters )	{
 			FIO1PIN ^= BIT(18);
 			pll_feed();
 			a=0;
+			qsprintf("hit: %.1f-%.1f = gh: %d, h: %d, hl: %d, p: %d, b: %d, g: %d\r\n", data_f[0], data_f[1], \
+				konter.global_hit, konter.t_konter[0].hit, konter.t_konter[0].hit_lama, \
+				konter.t_konter[0].last_period, konter.t_konter[0].beda, giliran);
 		}
 		//qsprintf("%d-kirim-queue-%d\r\n", b, b++);
 	}

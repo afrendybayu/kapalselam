@@ -27,6 +27,10 @@ void setup_hardware()	{
 		setup_relay();
 	#endif
 	
+	#ifdef PAKAI_SPI_SSP0
+		setup_ssp0();
+	#endif
+	
 	#ifdef PAKAI_LED_UTAMA
 		setup_led_utama();
 	#endif
@@ -60,7 +64,7 @@ void setup_hardware()	{
 }
 
 void init_hardware()	{
-	gpio_int_init();
+	
 	
 	#ifdef PAKAI_LED_UTAMA
 
@@ -69,6 +73,7 @@ void init_hardware()	{
 	#ifdef PAKAI_SHELL
 		vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE );
 	#endif
+	gpio_int_init();
 }
 
 int setup_konter_onoff(unsigned int aaa, unsigned char statk) {
@@ -78,7 +83,7 @@ int setup_konter_onoff(unsigned int aaa, unsigned char statk) {
 		/*
 		if (aaa==0) {	IO2_INT_EN_R |= kont_1;		bbb = 101;	}
 		if (aaa==1) {	IO2_INT_EN_R |= kont_2;		bbb = 102;	}
-		//if (aaa==2) {	IO2_INT_EN_R |= kont_3;		bbb = 103;	}
+		if (aaa==2) {	IO2_INT_EN_R |= kont_3;		bbb = 103;	}
 		if (aaa==3) {	IO2_INT_EN_R |= kont_4;		bbb = 104;	}
 		if (aaa==4) {	IO2_INT_EN_R |= kont_5;		bbb = 105;	}
 		if (aaa==5) {	IO2_INT_EN_R |= kont_6;		bbb = 106;	}
@@ -99,16 +104,16 @@ int setup_konter_onoff(unsigned int aaa, unsigned char statk) {
 		if (aaa==8) {	;	bbb = 209;	}
 		if (aaa==9) {	;	bbb = 210;	}
 	} else {
-		if (aaa==0) {	IO2_INT_EN_R &= ~iKonter_1;		bbb = 1;	}
-		if (aaa==1) {	IO2_INT_EN_R &= ~iKonter_2;		bbb = 2;	}
-		if (aaa==2) {	IO2_INT_EN_R &= ~iKonter_3;		bbb = 3;	}
-		if (aaa==3) {	IO2_INT_EN_R &= ~iKonter_4;		bbb = 4;	}
-		if (aaa==4) {	IO2_INT_EN_R &= ~iKonter_5;		bbb = 5;	}
-		if (aaa==5) {	IO2_INT_EN_R &= ~iKonter_6;		bbb = 6;	}
-		if (aaa==6) {	IO2_INT_EN_R &= ~iKonter_7;		bbb = 7;	}
-		if (aaa==7) {	IO2_INT_EN_R &= ~iKonter_8;		bbb = 8;	}
-		if (aaa==8) {	IO2_INT_EN_R &= ~iKonter_9;		bbb = 9;	}
-		if (aaa==9) {	IO2_INT_EN_R &= ~iKonter_10;	bbb = 10;	}
+		if (aaa==0) {	IO2_INT_EN_F &= ~iKonter_1;		bbb = 1;	}
+		if (aaa==1) {	IO2_INT_EN_F &= ~iKonter_2;		bbb = 2;	}
+		if (aaa==2) {	IO2_INT_EN_F &= ~iKonter_3;		bbb = 3;	}
+		if (aaa==3) {	IO2_INT_EN_F &= ~iKonter_4;		bbb = 4;	}
+		if (aaa==4) {	IO2_INT_EN_F &= ~iKonter_5;		bbb = 5;	}
+		if (aaa==5) {	IO2_INT_EN_F &= ~iKonter_6;		bbb = 6;	}
+		if (aaa==6) {	IO2_INT_EN_F &= ~iKonter_7;		bbb = 7;	}
+		if (aaa==7) {	IO2_INT_EN_F &= ~iKonter_8;		bbb = 8;	}
+		if (aaa==8) {	IO2_INT_EN_F &= ~iKonter_9;		bbb = 9;	}
+		if (aaa==9) {	IO2_INT_EN_F &= ~iKonter_10;	bbb = 10;	}
 		
 	}
 	return bbb;
@@ -160,7 +165,8 @@ void gpio_int_init()	{
 	T1CCR = 0;                      // disable dulu compare registers
 	T1EMR = 0;                      // disable external match register
 	T1TCR = TxTCR_Counter_Enable;
-
+	
+	#if 1
 	//siapkan interrupt handler untuk Timer 1
 	VICIntSelect &= ~(VIC_CHAN_TO_MASK(VIC_CHAN_NUM_Timer1));
 	VICIntEnClr  = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_Timer1);
@@ -173,24 +179,27 @@ void gpio_int_init()	{
 
 	// karena masih 3 menit yang akan datang, harusnya dienable dari sini gak masalah
 	T1TCR = TxTCR_Counter_Enable;         // enable timer 0
-
+	#endif
+	
+	#if 1
 	//siapkan interrupt handler untuk GPIO
 	VICIntSelect    &= ~VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
 	VICIntEnClr      = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
 	VICVectAddr17 = ( portLONG )gpio_ISR_Wrapper;
 	VICVectPriority17 = 0x05;
 	VICIntEnable = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
-
+	#endif
 
 	// setup GPIO direction as input & interrupt
 	FIO2DIR &= ~(iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5);
-	FIO0DIR &= ~(iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10);
+	//FIO0DIR &= ~(iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10);
 	
-	// enable falling edge interrupt
+	// enable rising edge interrupt
 	// inverse input	--> input MPU rising edge, masuk inverter falling edge
 	
-	IO2_INT_EN_F |= iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5;
-	IO0_INT_EN_F |= iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_5;
+	IO2_INT_EN_R |= iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5;
+	//IO0_INT_EN_R |= iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_5;
 
 	portEXIT_CRITICAL();
+	//uprintf("%s...masuk\r\n", __FUNCTION__);
 }

@@ -16,10 +16,11 @@
 #include <stdarg.h>
 #include "queue.h"
 #include "hardware.h"
-#include <stdio.h>
+//#include <stdio.h>
 #include "sh_hardware.h"
 #include "sh_rtos.h"
 #include "sh_data.h"
+#include <stdio.h>
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;

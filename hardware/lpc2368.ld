@@ -1,9 +1,11 @@
 MEMORY 
 {
 	flash	: ORIGIN = 0x00000000, LENGTH = 500K
-	ram	: ORIGIN = 0x40000000, LENGTH = 64K
+	/*ram	: ORIGIN = 0x40000000, LENGTH = 64K*/
+	ram		: ORIGIN = 0x40000000, LENGTH = (64K - 32)
 	usbram   : ORIGIN = 0x7FD00000, LENGTH = 8K
 	ethram   : ORIGIN = 0x7FE00000, LENGTH = 16K
+	rtcram	 : ORIGIN = 0xE0084000, LENGTH = 1K
 }
 
 __stack_end__ = 0x40000000 + 32K - 4;

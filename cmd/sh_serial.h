@@ -82,7 +82,7 @@
 #define comTX_BLOCK_TIME			( ( portTickType ) 100 )			// 0xffff
 
 /* The receive task as described at the top of the file. */
-static portTASK_FUNCTION_PROTO( vComRxTask, pvParameters );
+static portTASK_FUNCTION( vComRxTask, pvParameters );
 
 void vAltStartComTestTasks( unsigned portBASE_TYPE uxPriority, unsigned long ulBaudRate );
 portBASE_TYPE xAreComTestTasksStillRunning( void );

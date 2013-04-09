@@ -73,6 +73,11 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 						PINSEL0 |= mainTX_ENABLE | mainRX_ENABLE;	\
 					} while(0)
 		#endif
+
+		#ifdef PAKAI_SPI_SSP0
+			#define setup_ssp0()	do {	\
+						
+		#endif
 	
 		#define iKonter_1		BIT(5) 	// P25, konter_1
 		#define iKonter_2		BIT(6)	// P26
@@ -85,6 +90,7 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 		#define iKonter_8		BIT(26)	// P026
 		#define iKonter_9		BIT(28)	// P027
 		#define iKonter_10		BIT(28)	// P028
+
 	#endif
 #endif
 
