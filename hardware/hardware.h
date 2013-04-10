@@ -75,8 +75,34 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 		#endif
 
 		#ifdef PAKAI_SPI_SSP0
-			#define setup_ssp0()	do {	\
-						
+			
+			#define setup_spi_ssp0()	do {	\
+						PCONP		|= BIT(21);	\
+						PINSEL3		|= BIT(9) | BIT(8);	\
+						PINSEL3		|= BIT(15) | BIT(14);	\
+						PINSEL3		|= BIT(17) | BIT(16);	\
+						SSP0CPSR	 = 8;	\
+					} while(0)
+					// PCONP default AKTIF
+					// PINSEL SPI : SCK0 | MISO0 | MOSI0
+					// PreScaled SSP0 dibagi 8 ~ 133ns
+		#endif
+		
+		#ifdef PAKAI_SPI1_P0
+			#define setup_spi1_p0()	do {	\
+						PCONP		|= BIT(8);				\
+						PINSEL0 	|= BIT(15) | BIT(17) | BIT(19);	\
+						PCLKSEL0	|= BIT(16) | BIT(17);	\	
+					} while(0)
+					// PCONP defaultnya AKTIF
+					// PINSEL SPI : SCK1 | MISO1 | MOSI1
+					// PCLK/8 ~ 133ns
+		#endif
+		
+		#ifdef PAKAI_ADC_AD7708
+			#define CS_ADC				BIT(6)
+			#define ADC_SELECT()		FIO0CLR = CS_ADC
+			#define ADC_DESELECT()		FIO0SET = CS_ADC
 		#endif
 	
 		#define iKonter_1		BIT(5) 	// P25, konter_1

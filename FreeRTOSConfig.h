@@ -98,6 +98,8 @@
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
 
+#define PAKAI_SPI1_P0
+
 /* Value to use on old rev '-' devices. */
 #define configPINSEL2_VALUE	0x50151105
 
