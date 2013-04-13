@@ -28,7 +28,11 @@ void setup_hardware()	{
 	#endif
 	
 	#ifdef PAKAI_SPI_SSP0
-		setup_ssp0();
+		//setup_ssp0();
+	#endif
+
+	#ifdef PAKAI_SPI_SSP1
+		setup_spi_ssp1();
 	#endif
 	
 	#ifdef PAKAI_LED_UTAMA
@@ -74,6 +78,14 @@ void init_hardware()	{
 		vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE );
 	#endif
 	gpio_int_init();
+	
+	#ifdef PAKAI_SPI1_P0
+		init_spi0();
+	#endif
+	
+	#ifdef PAKAI_SPI_SSP1
+		init_ssp1();
+	#endif
 }
 
 int setup_konter_onoff(unsigned int aaa, unsigned char statk) {

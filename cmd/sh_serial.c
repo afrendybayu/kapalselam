@@ -80,7 +80,7 @@ void uprintf(char *fmt, ...) {
 #endif
 
 void vAltStartComTestTasks( unsigned portBASE_TYPE uxPriority, unsigned long ulBaudRate )		{
-const unsigned portBASE_TYPE uxQueueSize = 5;
+const unsigned portBASE_TYPE uxQueueSize = 10;
 const unsigned portBASE_TYPE uxQueueLength = 128;
 	xPrintQueue = xQueueCreate( uxQueueSize, uxQueueLength );
 	/* Initialise the com port then spawn the Rx and Tx tasks. */
@@ -100,9 +100,9 @@ void init_banner()	{
 	//uprintf("xPrintQueue hasil queue: %d\r\n", xPrintQueue);
 	uprintf("\r\n\r\nDaun Biru Engineering, Maret 2013\r\n");
 	uprintf("==================================\r\n");
-	uprintf("monita %s %s\r\n", "Santer", "v1.0");
+	uprintf("monita %s %s\r\n", BOARD_SANTER, BOARD_SANTER_v1_0);
 	uprintf("CPU LPC 2387, %d MHz\r\n", configCPU_CLOCK_HZ/1000000);
-	uprintf("FreeRTOS %s\r\n", tskKERNEL_VERSION_NUMBER);		//  oleh Richard Barry
+	uprintf("FreeRTOS %s by Richard Barry\r\n", tskKERNEL_VERSION_NUMBER);		//  oleh Richard Barry
 	uprintf("ARM-GCC %s : %s : %s\r\n", __VERSION__, __DATE__, __TIME__);
 	
 }
@@ -149,7 +149,7 @@ char s[30];
 
 	/* Just to stop compiler warnings. */
 	( void ) pvParameters;
-	vTaskDelay(500);
+	vTaskDelay(100);
 	init_banner();
 	//vTaskDelay(1000);
 

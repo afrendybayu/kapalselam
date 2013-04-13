@@ -46,6 +46,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "monita.h"
+#include "modul/adc/ad7708.h"
 
 /* Demo app includes. */
 //#include "LCD/portlcd.h"
@@ -195,7 +196,9 @@ extern unsigned int giliran;
 void vLedTask( void *pvParameters )	{
 
 	int a=0, b=0;
-	vTaskDelay(1000);
+	vTaskDelay(500);
+	//cek_adc_id();
+	//set_iocon(0x32);
 	for( ;; )	{
 		#if 0
 		FIO1CLR |= BIT(18);
@@ -210,9 +213,24 @@ void vLedTask( void *pvParameters )	{
 			FIO1PIN ^= BIT(18);
 			pll_feed();
 			a=0;
-			qsprintf("hit: %.1f-%.1f = gh: %d, h: %d, hl: %d, p: %d, b: %d, g: %d\r\n", data_f[0], data_f[1], \
+			//qsprintf("hit: %.1f-%.1f = gh: %d, h: %d, hl: %d, p: %d, b: %d, g: %d\r\n", data_f[0], data_f[1], \
 				konter.global_hit, konter.t_konter[0].hit, konter.t_konter[0].hit_lama, \
 				konter.t_konter[0].last_period, konter.t_konter[0].beda, giliran);
+			//qsprintf("reg ID     : %02x\r\n", m_read | reg_id);
+			qsprintf("id adc    : %02x\r\n", cek_adc_idx());
+			qsprintf("mode adc  : %02x\r\n", cek_adc_modex());
+			qsprintf("iocon adc : %02x\r\n", set_adc_ioconx(0x32));
+			qsprintf("filter adc : %02x\r\n", cek_adc_filterx());
+			qsprintf("kontrol adc: %02x\r\n", cek_adc_kontrolx());
+			qsprintf("------------------------------\r\n");
+			set_adc_ioconx(0x32);
+			//uprintf("st adc: %02x\r\n", cek_adc_status());
+			
+			//uprintf("filter adc : %02x\r\n", cek_adc_filterx());
+			//uprintf("kontrol adc: %02x\r\n", cek_adc_kontrolx());
+			uprintf("iocon adc  : %02x\r\n", cek_adc_ioconx());
+			//qsprintf("io adc: %02x\r\n", cek_iocon());
+			//cek_adc_offset();
 		}
 		//qsprintf("%d-kirim-queue-%d\r\n", b, b++);
 	}

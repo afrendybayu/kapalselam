@@ -92,13 +92,16 @@
  *----------------------------------------------------------*/
 
 #define PROMPT				"iTong"
-#define BOARD_SANTER
-#define BOARD_SANTER_v1_0
+#define BOARD_SANTER		"Santer"
+#define BOARD_SANTER_v1_0	"v1.0"
 
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
 
-#define PAKAI_SPI1_P0
+#define PAKAI_SPI_SSP1
+#ifdef  PAKAI_SPI_SSP1
+	
+#endif
 
 /* Value to use on old rev '-' devices. */
 #define configPINSEL2_VALUE	0x50151105

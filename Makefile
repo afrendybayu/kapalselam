@@ -104,6 +104,7 @@ THUMB_SOURCE= \
 		hardware/hardware.c		\
 		hardware/cpu_setup.c	\
 		hardware/syscalls.c		\
+		hardware/spi_ssp.c		\
 		cmd/sh_hardware.c		\
 		cmd/sh_rtos.c			\
 		cmd/sh_data.c			\
@@ -125,8 +126,13 @@ SERIAL_SOURCE=	\
 		modul/serial/serial.c 	\
 		modul/serial/tinysh.c		\
 
+ADC_SOURCE= \
+		modul/adc/ad7708.c	\
+		
+
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
+THUMB_SOURCE += $(ADC_SOURCE)
 
 ARM_SOURCE= \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/portISR.c \

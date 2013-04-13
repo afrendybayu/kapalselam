@@ -11,6 +11,37 @@
 #define SPI_LSBF	BIT(6)
 #define SPI_SPIE	BIT(7)
 
+#define SSP_LBM		BIT(0)
+#define SSP_SSE		BIT(1)
+#define SSP_SLAVE	BIT(2)
+#define SSP_SOD		BIT(3)
+#define SSP_CPOL	BIT(6)
+#define SSP_CPHA	BIT(7)
+
+#define SSP_DDS8	0x07
+#define SSP_DDS16	0x0F
+
+#define SSP_FR_TI	(1<<4)
+#define SSP_FR_MW	(2<<4)
+
+#define SSP_SCR0	(0<<8)
+#define SSP_SCR1	(1<<8)
+#define SSP_SCR2	(2<<8)
+
+#define SSP_TFE		BIT(0)
+#define SSP_TNF		BIT(1)
+#define SSP_RNE		BIT(2)
+#define SSP_RFF		BIT(3)
+#define SSP_BSY		BIT(4)
+
+#define FIFO_SSP	8
+
+
 void init_spi0();
+char spiPut (char valueIn);
+
+void SSP1Send( unsigned char buf, short Length );
+unsigned char SSP1Receive(void);
+void SSP1Terima ( short Length );
 
 #endif
