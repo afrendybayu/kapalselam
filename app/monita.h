@@ -83,6 +83,17 @@ unsigned int giliran;
 struct t2_konter konter;
 unsigned char status_konter[JML_KANAL];
 
+struct t_st_hw  {
+	unsigned char init;
+	long int idle;
+	long int idle_c;
+	unsigned char adc;
+	unsigned char rtc;
+	
+};
+
+struct t_st_hw st_hw;
+
 struct t_kalib {
 	float m;
 	float C;
@@ -90,6 +101,13 @@ struct t_kalib {
 	char ket[32];
 	char adc;
 	char formula[32];
+};
+
+struct t_adc {
+	unsigned int cur_kanal;
+	unsigned int count;
+	unsigned short data[20];
+	float flt_data[20];
 };
 
 struct t_env {

@@ -98,9 +98,13 @@
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
 
+#define ST_LED			2
+#define ST_SHELL		15
+#define ST_SANTER		10
+
 #define PAKAI_SPI_SSP1
 #ifdef  PAKAI_SPI_SSP1
-	
+	#define PAKAI_ADC_7708
 #endif
 
 /* Value to use on old rev '-' devices. */
@@ -115,7 +119,7 @@
 
 //#define configUSE_TIMERS			1
 #define configUSE_PREEMPTION		1		// 0/1 bisa semua.
-#define configUSE_IDLE_HOOK         0
+#define configUSE_IDLE_HOOK         1
 #define configUSE_TICK_HOOK         0
 //#define configCPU_CLOCK_HZ          ( ( unsigned long ) 48000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
 #define configCPU_CLOCK_HZ          ( ( unsigned long ) 60000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
@@ -142,7 +146,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelete                 0
 #define INCLUDE_vTaskCleanUpResources       0
 #define INCLUDE_vTaskSuspend                1
-#define INCLUDE_vTaskDelayUntil             0
+#define INCLUDE_vTaskDelayUntil             1
 #define INCLUDE_vTaskDelay                  1
 #define INCLUDE_xTaskGetCurrentTaskHandle	0
 

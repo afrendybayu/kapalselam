@@ -85,6 +85,7 @@ static void vLedTask( void *pvParameters );
 /* The queue used to send messages to the LCD task. */
 //xQueueHandle xLCDQueue;
 xTaskHandle hdl_led;
+extern struct t_st_hw st_hw;
 
 /*-----------------------------------------------------------*/
 
@@ -113,20 +114,20 @@ xSemaphoreHandle xButtonSemaphore;
 
 
 int main( void )	{
-
+	st_hw.init = 0;
+	st_hw.idle_c = 0;
+	
 	setup_hardware();
-
-	vSemaphoreCreateBinary( xButtonSemaphore );		// xSemaphoreHandle xButtonSemaphore;
-	xSemaphoreTake( xButtonSemaphore, 0 );
-
-	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*2, NULL, \
-		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
-	init_ambilCepatTasks();
 	init_hardware();
+	
+	//vSemaphoreCreateBinary( xButtonSemaphore );		// xSemaphoreHandle xButtonSemaphore;
+	//xSemaphoreTake( xButtonSemaphore, 0 );
 
-
-	/* Start the standard demo tasks. */
-	//vStartComTestStringsTasks(mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
+	xTaskCreate( vLedTask, ( signed portCHAR * ) "Led", configMINIMAL_STACK_SIZE*ST_LED, NULL, \
+		tskIDLE_PRIORITY, ( xTaskHandle * ) &hdl_led );		// #define xTaskCreate(.....) 		xTaskGenericCreate( .. )
+		
+	init_ambilCepatTasks();
+	
 
 
 	/* Start the scheduler. */
@@ -137,14 +138,18 @@ int main( void )	{
 }
 /*-----------------------------------------------------------*/
 
-#if 0
-void vApplicationTickHook( void )
-{
+void vApplicationIdleHook()	{
+	st_hw.idle_c++;
+}
+
+void vApplicationTickHook( void )	{
+	
 unsigned portBASE_TYPE uxColumn = 0;
 static xLCDMessage xMessage = { 0, "PASS" };
 static unsigned portLONG ulTicksSinceLastDisplay = 0;
 static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
+#if 0
 	// Called from every tick interrupt.  Have enough ticks passed to make it
 	// time to perform our health status check again?
 	ulTicksSinceLastDisplay++;
@@ -185,8 +190,9 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 		xHigherPriorityTaskWoken = pdFALSE;
 		//xQueueSendToBackFromISR( xLCDQueue, &xMessage, &xHigherPriorityTaskWoken );
 	}
-}
 #endif
+}
+
 /*-----------------------------------------------------------*/
 
 //extern volatile float data_f[];
@@ -195,43 +201,36 @@ extern unsigned int giliran;
 
 void vLedTask( void *pvParameters )	{
 
-	int a=0, b=0;
-	vTaskDelay(500);
-	//cek_adc_id();
-	//set_iocon(0x32);
-	for( ;; )	{
-		#if 0
-		FIO1CLR |= BIT(18);
-		vTaskDelay(300);
-		FIO1SET |= BIT(18);
-		vTaskDelay(300);
-		#endif
-		
+	char a=0, b=1, i=0;
+	vTaskDelay(100);
+
+	do	{
 		vTaskDelay(100);
-		a++;
-		if (a>5)	{
-			FIO1PIN ^= BIT(18);
-			pll_feed();
+		FIO1PIN ^= LED_UTAMA;
+		pll_feed();
+	} while(st_hw.init==0);
+	
+	b = 5;
+	for( ;; )	{
+		if (a>b)	{
+			FIO1PIN ^= LED_UTAMA;
 			a=0;
+			
+			i = 1-i;
+			if (i)	{
+				st_hw.idle   = st_hw.idle_c;
+				st_hw.idle_c = 0;
+				pll_feed();
+			}
+			
 			//qsprintf("hit: %.1f-%.1f = gh: %d, h: %d, hl: %d, p: %d, b: %d, g: %d\r\n", data_f[0], data_f[1], \
 				konter.global_hit, konter.t_konter[0].hit, konter.t_konter[0].hit_lama, \
 				konter.t_konter[0].last_period, konter.t_konter[0].beda, giliran);
 			//qsprintf("reg ID     : %02x\r\n", m_read | reg_id);
-			qsprintf("id adc    : %02x\r\n", cek_adc_idx());
-			qsprintf("mode adc  : %02x\r\n", cek_adc_modex());
-			qsprintf("iocon adc : %02x\r\n", set_adc_ioconx(0x32));
-			qsprintf("filter adc : %02x\r\n", cek_adc_filterx());
-			qsprintf("kontrol adc: %02x\r\n", cek_adc_kontrolx());
-			qsprintf("------------------------------\r\n");
-			set_adc_ioconx(0x32);
-			//uprintf("st adc: %02x\r\n", cek_adc_status());
-			
-			//uprintf("filter adc : %02x\r\n", cek_adc_filterx());
-			//uprintf("kontrol adc: %02x\r\n", cek_adc_kontrolx());
-			uprintf("iocon adc  : %02x\r\n", cek_adc_ioconx());
-			//qsprintf("io adc: %02x\r\n", cek_iocon());
-			//cek_adc_offset();
+
 		}
+		vTaskDelay(100);
+		a++;
 		//qsprintf("%d-kirim-queue-%d\r\n", b, b++);
 	}
 }

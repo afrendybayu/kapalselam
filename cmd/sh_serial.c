@@ -20,11 +20,13 @@
 #include "sh_hardware.h"
 #include "sh_rtos.h"
 #include "sh_data.h"
-#include <stdio.h>
+//#include <stdio.h>
+#include "monita.h"
 
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
 xTaskHandle *hdl_shell;
+extern struct t_st_hw st_hw;
 
 #if 1
 void printd(int prio, const char *format, ...)	{
@@ -87,7 +89,7 @@ const unsigned portBASE_TYPE uxQueueLength = 128;
 	xSerialPortInitMinimal( ulBaudRate, configMINIMAL_STACK_SIZE );
 
 	/* The Tx task is spawned with a lower priority than the Rx task. */
-	xTaskCreate( vComRxTask, ( signed char * ) "Shell", comSTACK_SIZE * 15, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
+	xTaskCreate( vComRxTask, ( signed char * ) "Shell", comSTACK_SIZE * ST_SHELL, NULL, uxPriority, ( xTaskHandle * ) hdl_shell );
 }
 
 void init_banner()	{
@@ -138,6 +140,7 @@ void cmd_shell()	{
 	tinysh_add_command(&reset_cmd);
 	tinysh_add_command(&task_list_cmd);
 	tinysh_add_command(&cek_data_cmd);
+	tinysh_add_command(&idle_tick_cmd);
 }
 
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{
@@ -149,12 +152,17 @@ char s[30];
 
 	/* Just to stop compiler warnings. */
 	( void ) pvParameters;
-	vTaskDelay(100);
+	vTaskDelay(1);
 	init_banner();
-	//vTaskDelay(1000);
+	
 
 	
 	cmd_shell();
+	
+	do	{
+		vTaskDelay(100);
+	} while (st_hw.init==0);
+	
 	
 	sprintf(s, "%s$ ", PROMPT);
 	tinysh_set_prompt(s);

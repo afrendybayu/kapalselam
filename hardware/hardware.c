@@ -49,7 +49,6 @@ void setup_hardware()	{
 
 	#ifdef PAKAI_SHELL
 		setup_serial0_P0();
-		//vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE );
 	#endif
 	
 	#ifdef PAKAI_SERIAL_3
@@ -85,6 +84,7 @@ void init_hardware()	{
 	
 	#ifdef PAKAI_SPI_SSP1
 		init_ssp1();
+		
 	#endif
 }
 
