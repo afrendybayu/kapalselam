@@ -6,6 +6,7 @@
 #include "lpc23xx.h"
 #include "hardware.h"
 #include "spi_ssp.h"
+#include "monita.h"
 
 
 #define JML_KANAL_ADC		10
@@ -38,6 +39,11 @@
 
 #define CHCON_10			BIT(4)
 
+#define ADC_RDY				BIT(7)
+#define ADC_CAL				BIT(5)
+#define ADC_ERR				BIT(3)
+#define ADC_LOCK			BIT(0)
+
 #define M_ADC_PWRDOWN		0x00
 #define M_ADC_IDLE			0x01
 #define M_ADC_SINGLE_CONV	0x02
@@ -47,7 +53,10 @@
 #define M_ADC_SZS			0x06
 #define M_ADC_SFS			0x07
 
-#define RATE_FILTER_20		0x68
+#define RATE_FILTER_13		0x68
+#define RATE_FILTER_33		0x28
+
+#define faktor_pengali_420	2.5
 
 #define cek_adc_idx()		cek_reg_adc(reg_id)
 #define cek_adc_modex()		cek_reg_adc(reg_mode)
@@ -64,12 +73,18 @@
 
 
 
+//unsigned short cek_reg_adc(unsigned char reg);
 unsigned char cek_reg_adc(unsigned char reg);
+//unsigned short set_reg_adc(unsigned char reg, unsigned char data);
 unsigned char set_reg_adc(unsigned char reg, unsigned char data);
-char init_ad7708();
 
-void cek_adc_offset(void);
-
-
+unsigned char setup_ad7708();
+void init_ad7708();
+unsigned char koleksi_adc7708();
+void cek_adc_gain(void);
+void set_xreg_adc(unsigned char reg, uchr *data, int length);
+void cek_xreg_adc(unsigned char reg, uchr *data, int length);
+int ambil_data_ad7708();
+unsigned char ada_data_ad7708();
 
 #endif

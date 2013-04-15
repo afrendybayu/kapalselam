@@ -97,14 +97,20 @@
 
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
+#define PAKAI_SDCARD
 
 #define ST_LED			2
 #define ST_SHELL		15
 #define ST_SANTER		10
 
+#define PAKAI_SPI_SSP0
+#ifdef  PAKAI_SPI_SSP0
+	#define PAKAI_SDCARD
+#endif
+
 #define PAKAI_SPI_SSP1
 #ifdef  PAKAI_SPI_SSP1
-	#define PAKAI_ADC_7708
+	#define PAKAI_ADC_7708 
 #endif
 
 /* Value to use on old rev '-' devices. */
@@ -117,10 +123,16 @@
 	#error Please uncomment one of the two configPINSEL2_VALUE definitions above, depending on the revision of the LPC2000 device being used.
 #endif
 
-//#define configUSE_TIMERS			1
-#define configUSE_PREEMPTION		1		// 0/1 bisa semua.
-#define configUSE_IDLE_HOOK         1
-#define configUSE_TICK_HOOK         0
+//#define configUSE_TIMERS				1
+#define configUSE_PREEMPTION			1		// 0/1 bisa semua.
+#define configUSE_IDLE_HOOK         	1
+#define configUSE_TICK_HOOK         	0
+
+
+//#define configGENERATE_RUN_TIME_STATS	1
+//#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ( ulHighFrequencyTimerTicks = 0UL )
+//#define portGET_RUN_TIME_COUNTER_VALUE()	ulHighFrequencyTimerTicks
+
 //#define configCPU_CLOCK_HZ          ( ( unsigned long ) 48000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
 #define configCPU_CLOCK_HZ          ( ( unsigned long ) 60000000 )	/* =12Mhz xtal multiplied by 5 using the PLL. */
 #define configTICK_RATE_HZ          ( ( portTickType ) 1000 )
@@ -172,11 +184,5 @@ to exclude the API function. */
 
 #ifndef BIT
 #define BIT(x)	(1 << (x))
-
-typedef struct
-{
-	long xColumn;
-	char *pcMessage;
-} xLCDMessage;
 
 #endif

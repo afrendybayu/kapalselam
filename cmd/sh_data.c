@@ -4,9 +4,9 @@
 #include "monita.h"
 #include "serial/tinysh.h"
 
-//extern volatile float data_f[];
+extern float data_f[];
 
-int cek_data(int argc, char **argv)	{
+void cek_data(int argc, char **argv)	{
 	int i=0 ;
 	uprintf("\r\n    Cek data input modul    \r\n****************************************\r\n");
 	//uprintf("");

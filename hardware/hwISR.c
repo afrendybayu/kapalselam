@@ -17,6 +17,7 @@ void gpio_ISR_Handler( void );
 
 extern struct t2_konter konter;
 extern unsigned char status_konter[];
+extern struct t_adc adc;
 
 void timer1_ISR_Wrapper( void )	{
 	/* Save the context of the interrupted task. */
@@ -458,6 +459,14 @@ void gpio_ISR_Handler( void )	{
 	}
 	#endif
 
+
+	#ifdef PAKAI_ADC_7708x
+		if (IO2_INT_STAT_F & RDY_AD7708)	{
+			ambil_data_ad7708();
+			
+			IO2_INT_CLR = RDY_AD7708;
+		}
+	#endif
 	// Clear the ISR in the VIC. //
 	VICVectAddr = 0;
 }

@@ -3,36 +3,40 @@
 #include "monita.h"
 
 extern struct t_st_hw st_hw;
+extern struct t_adc adc;
 
+//unsigned short cek_reg_adc(unsigned char reg)	{
 unsigned char cek_reg_adc(unsigned char reg)	{
-	unsigned char cmd, xx;
+	unsigned char cmd, xx, yy;
 	
 	cmd = m_read | reg;
 	SSP1Send(cmd, 0);
-	SSP1Receive();
+	yy = SSP1Receive();
 	SSP1Send(cmd, 0);
 	xx = SSP1Receive();
 	
 	return xx;
+	//return (unsigned short) ( (xx << 8) | yy);
 }
 
+//unsigned short set_reg_adc(unsigned char reg, unsigned char data)	{
 unsigned char set_reg_adc(unsigned char reg, unsigned char data)	{
-	unsigned char cmd;
+	unsigned char cmd, resp;
 	
 	cmd = m_write | reg;
 	SSP1Send(cmd, 1);
 	SSP1Receive();
 	SSP1Send(data, 1);
 	SSP1Receive();
-	cek_reg_adc(reg);
+	resp = cek_reg_adc(reg);
 	
-	return cmd;
+	return resp;
 }
 
-char init_ad7708()	{
+unsigned char setup_ad7708()	{
 	unsigned char idadc, adaADC=0, ch, cadc;
-	short jj, kk, ww=0, gg=0;
-	
+	short jj, ww=0, gg=0;
+	//uprintf("__%s masuk\r\n", __FUNCTION__);
 	idadc = cek_adc_idx();		// cek
 	vTaskDelay(1);
 	ch = idadc>>4;
@@ -46,11 +50,11 @@ char init_ad7708()	{
 	
 	set_adc_ioconx(0x00);		// semua io port as input
 	//uprintf("SET ioc : %02x\r\n", 0x00);
-	//uprintf("ioc  : %02x \r\n", cek_adc_ioconx());
+	//uprintf("ioc  : %04x \r\n", cek_adc_ioconx());
 	vTaskDelay(1);
 	set_adc_modex(0x01);		// mode idle
 	//uprintf("SET mode : %02x\r\n", 0x01);
-	//uprintf("mode : %02x \r\n", cek_adc_modex());
+	//uprintf("mode : %04x \r\n", cek_adc_modex());
 	adaADC = 2;
 	uprintf("Kalibrasi %d kanal ADC %s, id: %02x\r\n", JML_KANAL_ADC, (ch==5)?"AD7708":"AD7718", idadc );
 	for (ch=0; ch<JML_KANAL_ADC; ch++)	{		// JML_KANAL_ADC
@@ -61,21 +65,22 @@ char init_ad7708()	{
 			cadc = (ch << 4) | unipolar | rADC2560;			// REFIN 0-2.56V
 		set_adc_kontrolx(cadc);
 		vTaskDelay(1);
-		set_adc_modex(CHCON_10 | M_ADC_IZS);				// ena CHOP, CHCON:10ch, ,
+		set_adc_modex(CHCON_10 | M_ADC_IZS);				// ena CHOP, CHCON:10ch
 		vTaskDelay(1);
-		jj = 0; kk = 0;
+		jj = 0;
 		do {
-			jj++; kk++;
-			cadc = cek_adc_modex() & M_ADC_IDLE;
+			jj++;
 			vTaskDelay(10);
-			if (kk>100)		{
+			//uprintf("mode : %04x \r\n", cek_adc_modex());
+			cadc = cek_adc_modex() & M_ADC_IDLE;
+			if (jj>100)		{
 				adaADC = 3;
 				break;
 			}
 		} while (cadc!=M_ADC_IDLE);
 		
 		if (adaADC==3)	{
-			uprintf("GAGAL Kalibrasi [%d].\r\n", kk);
+			uprintf("GAGAL Kalibrasi [%d].\r\n", jj);
 			gg++;
 		} else {
 			uprintf("OK : %d\r\n", jj);
@@ -91,30 +96,104 @@ char init_ad7708()	{
 		return adaADC;
 	}
 	
-	set_adc_filterx(RATE_FILTER_20);
+	//set_adc_filterx(RATE_FILTER_13);
+	set_adc_filterx(RATE_FILTER_33);
 	uprintf("ADC iocon 0x%02x; adccon 0x%02x; mode 0x%02x\r\n", 	\
 		cek_adc_ioconx(), cek_adc_kontrolx(), cek_adc_modex());
 	set_adc_ioconx(0x00);
-
+	vTaskDelay(1);
+	set_adc_modex(CHCON_10 | M_ADC_CONT_CONV);		// continues conversion
+	
 	adaADC = 5;
 	st_hw.adc = 1;
-	
+	uprintf("Mulai koleksi data ADC .....0x%02x\r\n", cek_adc_modex());
 	return adaADC;
 }
 
+unsigned char koleksi_adc7708()	{
+	adc.cur_kanal++;
+	//if (adc.cur_kanal>(JML_KANAL_ADC-1)) adc.cur_kanal = 0;
+	if (adc.cur_kanal>JML_KANAL_ADC) adc.cur_kanal = 0;
+	//uprintf("%s ambil adc: %d\r\n", __FUNCTION__, adc.cur_kanal);
+	
+	unsigned ch = (adc.cur_kanal << 4);
+	set_adc_kontrolx(ch | unipolar | rADC2560);
+	//uprintf("adc kontrol : 0x%02x\r\n", cek_adc_kontrolx());
+	return 1;
+}
 
-void cek_adc_offset(void)	{
+unsigned char ada_data_ad7708()	{
+	adc.count++;
+	adc.ambil = 1;
+}
+
+//int ambil_data_ad7708(uchar *data, int length)	{
+int ambil_data_ad7708()	{
+	char data[3];
+	uchr st = cek_adc_statusx();
+	if (cek_reg_adc(reg_status) & ADC_RDY)	{
+		st_hw.adc_c++;
+		cek_xreg_adc(reg_data, data, 3);
+		adc.data[adc.cur_kanal] = (unsigned short) ((data[1] << 8) | data[2]);
+		//qsprintf("data adc[%d]: %8d 0x%04x %02x %02x %02x\r\n", \
+			adc.cur_kanal+1, adc.data[adc.cur_kanal], adc.data[adc.cur_kanal], data[0], data[1], data[2]);
+		adc.ambil = 0;
+		koleksi_adc7708();
+		return 2;
+	}
+	return 0;
+}
+
+void init_ad7708()	{
+	adc.count = 0;
+	adc.cur_kanal = 1;
+	adc.ambil = 0;
+}
+
+void set_xreg_adc(unsigned char reg, uchr *data, int length)	{
+	int tt;
+	uchr cmd = m_write | reg;
+	SSP1Send(cmd, 1);
+	SSP1Receive();
+	for(tt=0; tt<(length-1); tt++)	{
+		SSP1Send(*data, 1);
+		SSP1Receive();
+		data++;
+	}
+}
+
+void cek_xreg_adc(unsigned char reg, uchr *data, int length)	{
+	int tt;
+	uchr cmd = m_read | reg;
+	SSP1Send(cmd, 1);
+	*data = SSP1Receive();
+	for(tt=1; tt<length; tt++)	{
+		SSP1Send(cmd, 1);
+		data++;
+		*data = SSP1Receive();
+	}
+}
+
+
+void cek_adc_gain(void)	{
 	
 	unsigned char cmd;
 	unsigned char xx;
 	unsigned char isi[5];
 	
+	//cmd = m_read | reg_gain;
 	cmd = m_read | reg_offset;
 	SSP1Send(cmd, 1);
-	//isi[0] = SSP1Receive(cmd, 1);
-	//isi[1] = SSP1Receive(cmd, 1);
-	SSP1Terima(2);
-	qsprintf("ofset adc: %02x %02x\r\n", isi[1], isi[0]);
+	isi[0] = SSP1Receive();
+	SSP1Send(cmd, 1);
+	isi[1] = SSP1Receive();
+	SSP1Send(cmd, 1);
+	isi[2] = SSP1Receive();
+	//SSP1Send(cmd, 1);
+	//isi[3] = SSP1Receive();
+	//SSP1Terima(2);
+	qsprintf("ofset adc: %02x %02x %02x\r\n", isi[2], isi[1], isi[0]);
 	//qsprintf("ofset adc: %02x %02x %02x %02x\r\n", isi[3], isi[2], isi[1], isi[0]);
 	//return xx;
 }
+

@@ -108,8 +108,8 @@ THUMB_SOURCE= \
 		cmd/sh_hardware.c		\
 		cmd/sh_rtos.c			\
 		cmd/sh_data.c			\
-		app/rpm.c				\
-		app/ambilcepat.c		\
+		app/ap_rpm.c				\
+		app/ap_ambilcepat.c		\
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
@@ -124,20 +124,30 @@ THUMB_SOURCE= \
 SERIAL_SOURCE=	\
 		cmd/sh_serial.c			\
 		modul/serial/serial.c 	\
-		modul/serial/tinysh.c		\
+		modul/serial/tinysh.c	\
 
 ADC_SOURCE= \
+		cmd/sh_adc.c		\
 		modul/adc/ad7708.c	\
-		
+		app/ap_adc.c		\
 
+SDC_SOURCE=	\
+		modul/ff9a/sdc.c	\
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
 THUMB_SOURCE += $(ADC_SOURCE)
+THUMB_SOURCE += $(SDC_SOURCE)
+
+		
+ADC_IRQ_SOURCE= \
+		modul/adc/adcISR.c	\
 
 ARM_SOURCE= \
 		$(RTOS_SOURCE_DIR)/portable/GCC/ARM7_LPC23xx/portISR.c \
 		modul/serial/serialISR.c	\
 		hardware/hwISR.c			\
+
+ARM_SOURCE += $(ADC_IRQ_SOURCE)
 
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)

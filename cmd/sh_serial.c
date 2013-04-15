@@ -23,6 +23,10 @@
 //#include <stdio.h>
 #include "monita.h"
 
+#ifdef PAKAI_ADC_7708
+	#include "sh_adc.h"
+#endif
+
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
 xTaskHandle *hdl_shell;
@@ -139,8 +143,15 @@ void cmd_shell()	{
 	#endif
 	tinysh_add_command(&reset_cmd);
 	tinysh_add_command(&task_list_cmd);
-	tinysh_add_command(&cek_data_cmd);
+//	tinysh_add_command(&task_run_time_cmd);
 	tinysh_add_command(&idle_tick_cmd);
+	
+	tinysh_add_command(&cek_data_cmd);
+	
+	#ifdef PAKAI_ADC_7708
+	tinysh_add_command(&cek_adc_cmd);
+	#endif
+	
 }
 
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{
@@ -155,13 +166,17 @@ char s[30];
 	vTaskDelay(1);
 	init_banner();
 	
-
-	
 	cmd_shell();
+	st_hw.init++;
+	
+	#ifdef configUSE_IDLE_HOOK
+		st_hw.init++;
+	#endif
+	
 	
 	do	{
 		vTaskDelay(100);
-	} while (st_hw.init==0);
+	} while (st_hw.init != uxTaskGetNumberOfTasks());
 	
 	
 	sprintf(s, "%s$ ", PROMPT);

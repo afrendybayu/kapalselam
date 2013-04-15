@@ -40,6 +40,11 @@
 void init_spi0();
 char spiPut (char valueIn);
 
+void init_ssp0();
+void SSP0Send( unsigned char buf, short Length );
+unsigned char SSP0Receive( void );
+
+void init_ssp1();
 void SSP1Send( unsigned char buf, short Length );
 unsigned char SSP1Receive(void);
 void SSP1Terima ( short Length );

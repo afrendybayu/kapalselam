@@ -46,6 +46,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "monita.h"
+#include "hardware.h"
 #include "modul/adc/ad7708.h"
 
 /* Demo app includes. */
@@ -128,8 +129,6 @@ int main( void )	{
 		
 	init_ambilCepatTasks();
 	
-
-
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 		// ada di source/tasks.c
@@ -143,13 +142,13 @@ void vApplicationIdleHook()	{
 }
 
 void vApplicationTickHook( void )	{
-	
+#if 0
 unsigned portBASE_TYPE uxColumn = 0;
 static xLCDMessage xMessage = { 0, "PASS" };
 static unsigned portLONG ulTicksSinceLastDisplay = 0;
 static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-#if 0
+
 	// Called from every tick interrupt.  Have enough ticks passed to make it
 	// time to perform our health status check again?
 	ulTicksSinceLastDisplay++;
@@ -199,17 +198,59 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 extern struct t2_konter konter;
 extern unsigned int giliran;
 
+inline unsigned char cek_sdc()	{
+	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
+	return PORT2_INPUT(INS_SDC);
+}
+
+inline unsigned char cek_edy()	{
+	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
+	return PORT2_INPUT(RDY_AD7708);
+}
+
+inline void stat_ps()	{
+	st_hw.idle   = st_hw.idle_c;
+	st_hw.idle_c = 0;
+	st_hw.adc_pd = st_hw.adc_c;
+	st_hw.adc_c	 = 0;
+}
+
 void vLedTask( void *pvParameters )	{
-
+	st_hw.init++;
 	char a=0, b=1, i=0;
+	char ss[6];
+	portTickType xLastWakeTime;
+	const portTickType xFrequency = 500;
+	
 	vTaskDelay(100);
-
+	uprintf("  task : %s\r\n", __FUNCTION__);
 	do	{
 		vTaskDelay(100);
 		FIO1PIN ^= LED_UTAMA;
 		pll_feed();
-	} while(st_hw.init==0);
+	} while(st_hw.init != uxTaskGetNumberOfTasks());
 	
+	
+	int q = 0;
+	xLastWakeTime = xTaskGetTickCount();
+	for ( ;; )	{
+		FIO1PIN ^= LED_UTAMA;
+		
+		hitung_rpm();
+		data_frek_rpm();
+		data_adc();
+		// simpan_sdcard();		// simpan ke SDcard
+
+		
+		i = 1-i;
+		if (i)	{
+			stat_ps();
+			pll_feed();
+		}
+		vTaskDelayUntil( &xLastWakeTime, xFrequency );
+	}
+	
+	#if 0
 	b = 5;
 	for( ;; )	{
 		if (a>b)	{
@@ -223,15 +264,25 @@ void vLedTask( void *pvParameters )	{
 				pll_feed();
 			}
 			
+			
+			
 			//qsprintf("hit: %.1f-%.1f = gh: %d, h: %d, hl: %d, p: %d, b: %d, g: %d\r\n", data_f[0], data_f[1], \
 				konter.global_hit, konter.t_konter[0].hit, konter.t_konter[0].hit_lama, \
 				konter.t_konter[0].last_period, konter.t_konter[0].beda, giliran);
 			//qsprintf("reg ID     : %02x\r\n", m_read | reg_id);
-
+			//qsprintf("cADC : %d\r\n", adc.count);
+			cek_adc_gain();
+			//ss[0]=0x12; ss[1]=0x34;
+			//set_xreg_adc(reg_offset, ss, 2);
+			cek_xreg_adc(reg_offset, ss, 3);
+			//qsprintf("gain adc : %02x %02x %02x %02x %02x %02x\r\n", ss[5], ss[4], ss[3], ss[2], ss[1], ss[0]);
+			qsprintf("gain adc : %02x %02x %02x\r\n", ss[2], ss[1], ss[0]);
 		}
 		vTaskDelay(100);
 		a++;
 		//qsprintf("%d-kirim-queue-%d\r\n", b, b++);
 	}
+	#endif
 }
+
 

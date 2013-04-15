@@ -28,7 +28,7 @@ void setup_hardware()	{
 	#endif
 	
 	#ifdef PAKAI_SPI_SSP0
-		//setup_ssp0();
+		setup_spi_ssp0();
 	#endif
 
 	#ifdef PAKAI_SPI_SSP1
@@ -39,13 +39,15 @@ void setup_hardware()	{
 		setup_led_utama();
 	#endif
 
-	#ifdef PAKAI_ADC
-		setup_adc();
-	#endif
+	
 	
 	#ifdef CEK_BLINK
 		blink_led();
 	#endif
+
+	#ifdef PAKAI_SDCARD
+		setup_sdc();
+	#endif 
 
 	#ifdef PAKAI_SHELL
 		setup_serial0_P0();
@@ -63,7 +65,10 @@ void setup_hardware()	{
 		#endif
 	#endif
 
-	
+	#ifdef PAKAI_ADC_7708
+		//setup_eint1();
+		//setup_adc();
+	#endif
 }
 
 void init_hardware()	{
@@ -78,14 +83,22 @@ void init_hardware()	{
 	#endif
 	gpio_int_init();
 	
-	#ifdef PAKAI_SPI1_P0
-		init_spi0();
+	#ifdef PAKAI_SPI_SSP0
+		init_ssp0();
 	#endif
 	
 	#ifdef PAKAI_SPI_SSP1
 		init_ssp1();
-		
+	
+	#ifdef PAKAI_ADC_7708
+		adc_int_init();
 	#endif
+	
+	#endif
+	
+	#ifdef PAKAI_SDCARD
+		//init_sdc();
+	#endif 
 }
 
 int setup_konter_onoff(unsigned int aaa, unsigned char statk) {
@@ -195,23 +208,46 @@ void gpio_int_init()	{
 	
 	#if 1
 	//siapkan interrupt handler untuk GPIO
-	VICIntSelect    &= ~VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
-	VICIntEnClr      = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
-	VICVectAddr17 = ( portLONG )gpio_ISR_Wrapper;
+	VICIntSelect     &= ~VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
+	VICIntEnClr       = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
+	VICVectAddr17	  = ( portLONG )gpio_ISR_Wrapper;
 	VICVectPriority17 = 0x05;
-	VICIntEnable = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
+	VICIntEnable	  = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT3);
 	#endif
 
 	// setup GPIO direction as input & interrupt
 	FIO2DIR &= ~(iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5);
-	//FIO0DIR &= ~(iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10);
+	FIO0DIR &= ~(iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10);
 	
 	// enable rising edge interrupt
 	// inverse input	--> input MPU rising edge, masuk inverter falling edge
 	
 	IO2_INT_EN_R |= iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5;
-	//IO0_INT_EN_R |= iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_5;
+	IO0_INT_EN_R |= iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10;
+	
+	//#ifdef PAKAI_ADC_7708
+	FIO2DIR		 &= ~(RDY_AD7708);
+	IO2_INT_EN_F |= RDY_AD7708;
+	//#endif
 
 	portEXIT_CRITICAL();
 	//uprintf("%s...masuk\r\n", __FUNCTION__);
 }
+
+#if 1
+void adc_int_init()	{
+	extern void ( adc_ISR_Wrapper )( void );
+
+	portENTER_CRITICAL();
+	
+	VICIntSelect    &= ~VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT1);
+	VICIntEnClr      = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT1);
+	VICVectAddr15 = ( portLONG )adc_ISR_Wrapper;
+	VICVectPriority15 = 0x05;
+	VICIntEnable = VIC_CHAN_TO_MASK(VIC_CHAN_NUM_EINT1);
+	
+	FIO2DIR &= ~(RDY_AD7708);
+	IO2_INT_EN_F |= RDY_AD7708;
+	portEXIT_CRITICAL();
+}
+#endif

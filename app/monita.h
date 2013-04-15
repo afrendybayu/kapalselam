@@ -62,6 +62,8 @@ typedef void (*IAP)(unsigned int [],unsigned int[]);
 #define JUM_GPIO	10
 #define JML_KANAL	10
 
+#define uchr		unsigned char
+
 typedef struct {
 	//unsigned int new_period;
 	unsigned int last_period;
@@ -88,8 +90,10 @@ struct t_st_hw  {
 	long int idle;
 	long int idle_c;
 	unsigned char adc;
+	long int adc_pd;
+	long int adc_c;
 	unsigned char rtc;
-	
+	unsigned char sdc;
 };
 
 struct t_st_hw st_hw;
@@ -104,11 +108,15 @@ struct t_kalib {
 };
 
 struct t_adc {
-	unsigned int cur_kanal;
-	unsigned int count;
-	unsigned short data[20];
-	float flt_data[20];
+	unsigned char cur_kanal;
+	unsigned char count;
+	unsigned char ambil;
+	unsigned short data[JML_KANAL];
+	//float flt_data[JML_KANAL];
 };
+
+struct t_adc adc;
+
 
 struct t_env {
 	char nama_board[32];
@@ -148,6 +156,6 @@ struct t_env {
 	unsigned char almtSlave;
 	char statusSlave;
 };
-
+struct t_env env;
 
 #endif

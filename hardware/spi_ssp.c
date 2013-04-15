@@ -24,9 +24,58 @@ char spiPut (char valueIn)	{
 }
 #endif
 
+// untuk SD Card
 void init_ssp0()	{
+	char i;   
+	volatile char dummy;   
+	portENTER_CRITICAL();
 	
+	SSP0CR1	 = 0;
+	//SSP1CR0	 = SSP_SCR2 | SSP_CPHA | SSP_CPOL | SSP_DDS8;
+	SSP0CR0	 = SSP_DDS8;
+	SSP0CPSR = 6;		// range : 2-254 >> 10MHz (bisa 20-25MHz SDC)
+	
+	for (i=0; i<FIFO_SSP; i++)	{
+		dummy = SSP0DR;
+	}
+	
+	// enable master
+	SSP1CR1 = SSP_SSE;
+	portEXIT_CRITICAL();
 }
+
+void SSP0Send( unsigned char buf, short Length )   {
+    short i;   
+    //for ( i = 0; i < Length; i++ )	{   
+		// as long as TNF bit is set (TxFIFO is not full), I can always transmit //
+	
+		while ( (SSP0SR & SSP_TNF) != SSP_TNF);
+		SSP0DR = buf; 
+		//buf++;
+		// Wait until the Busy bit is cleared //
+		while ( (SSP0SR & SSP_BSY) == SSP_BSY);   
+
+	//}
+	return;   
+}
+
+unsigned char SSP0Receive( void )	{   
+	short i;   
+	unsigned char x;
+   
+	//for ( i = 0; i < Length; i++ )	{   
+		/* As long as Receive FIFO is not empty, I can always receive. */   
+		/* since it's a loopback test, clock is shared for both TX and RX,  
+		no need to write dummy byte to get clock to get the data */   
+		/* if it's a peer-to-peer communication, SSPDR needs to be written  
+		before a read can take place. */   
+		//SSP1DR = 0xFF;   
+		while ( !(SSP0SR & SSP_RNE) );
+		x = SSP0DR;
+	//	buf++;   
+	//}   
+	return x;
+}  
 
 
 // untuk ADC_AD7708

@@ -9,6 +9,6 @@
 extern struct t_st_hw st_hw;
 
 void idle_tick()	{
-	qsprintf("\r\nidle tick : %d/s\r\n", st_hw.idle);
+	qsprintf("\r\nidle tick : %d/s, adc: %d/s\r\n", st_hw.idle, st_hw.adc_pd);
 }
 

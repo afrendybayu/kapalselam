@@ -13,7 +13,9 @@ void gpio_init();
 void gpio_int_init();
 int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 
-
+#define PORT2_INPUT(kanal)	(FIO2PIN & BIT(kanal)) ? 1 : 0;
+#define PORT1_INPUT(kanal)	(FIO1PIN & BIT(kanal)) ? 1 : 0;
+#define PORT0_INPUT(kanal)	(FIO0PIN & BIT(kanal)) ? 1 : 0;
 
 #ifdef BOARD_SANTER
 	#ifdef BOARD_SANTER_v1_0
@@ -77,14 +79,13 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 		#ifdef PAKAI_SPI_SSP0
 			#define setup_spi_ssp0()	do {	\
 						PCONP		|= BIT(21);	\
-						PINSEL3		|= BIT(9) | BIT(8);	\
+						PINSEL3		|= BIT(9)  | BIT(8);	\
+						PINSEL3		|= BIT(11) | BIT(10);	\
 						PINSEL3		|= BIT(15) | BIT(14);	\
 						PINSEL3		|= BIT(17) | BIT(16);	\
-						SSP0CPSR	 = 8;	\
 					} while(0)
 					// PCONP default AKTIF
-					// PINSEL SPI : SCK0 | MISO0 | MOSI0
-					// PreScaled SSP0 dibagi 8 ~ 133ns
+					// PINSEL SPI : SCK0 | SSEL0 | MISO0 | MOSI0
 		#endif
 		
 		#ifdef PAKAI_SPI_SSP1
@@ -98,7 +99,6 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 					// PCONP default AKTIF
 					// PINSEL SPI : SSEL1 | SCK1 | MISO1 | MOSI1
 					// set ssel supaya tidak cs & uncs spi (auto)
-					// PreScaled SSP1 dibagi 8 ~ 133ns
 		#endif	
 		
 		#ifdef PAKAI_SPI1_P0
@@ -112,12 +112,24 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 					// PCLK/8 ~ 133ns
 		#endif
 
+
+
+		#ifdef PAKAI_ADC_7708
+			#define RDY_AD7708		11		// P211
+			#define setup_eint1()	do {			\
+						PINSEL4		|= BIT(22);		\
+					} while(0)
+
+		#endif
 		
+		#ifdef PAKAI_SDCARD
+			#define INS_SDC			2
+			#define setup_sdc()		do	{					\
+						PINSEL4		&= ~(BIT(5) | BIT(4));	\
+						FIO2DIR 	&= ~(BIT(INS_SDC));		\
+						PINMODE4	|= (BIT(5) | BIT(4));	\
+					} while (0)
 			
-		#ifdef PAKAI_ADC_AD7708
-			//#define CS_ADC				BIT(6)
-			//#define ADC_SELECT()			FIO0CLR = CS_ADC
-			//#define ADC_DESELECT()		FIO0SET = CS_ADC
 		#endif
 	
 		#define iKonter_1		BIT(5) 	// P25, konter_1
