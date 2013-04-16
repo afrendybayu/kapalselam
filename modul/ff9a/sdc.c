@@ -5,10 +5,19 @@
 * http://www.k9spud.com/sdcard/
 * http://www.ece.ucdavis.edu/vcl/vclpeople/jwwebb/measbd/ctrl_fpga/cdev/microsd_driver/html/microsd_8c-source.html
 ****************************/
+
+#include "FreeRTOS.h"
 #include "sdc.h"
 #include "monita.h"
 #include "spi_ssp.h"
 #include "hardware.h"
+
+extern struct t_st_hw st_hw;
+
+inline unsigned char cek_ins_sdc()	{
+	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
+	return PORT2_INPUT(INS_SDC);
+}
 
 void SD_kirimCmd(unsigned char* cmd)	{
 	int i;
@@ -16,7 +25,7 @@ void SD_kirimCmd(unsigned char* cmd)	{
 		//uprintf("%02x ", cmd[i]);
 		//SSP0Send(cmd[i], 1);
 		SSP0Send(*cmd, 1);
-		uprintf("%02x ", *cmd);
+		//uprintf("%02x ", *cmd);
 		cmd++;
 	}
 }
@@ -24,9 +33,9 @@ void SD_kirimCmd(unsigned char* cmd)	{
 unsigned char respon_SDcmd(unsigned char* rspn, int length)	{
 	int i=0, j=0;
 	for(i = 0; i < length; i++)		{
-		//Microsd_SpiTransfer(SDPtr, &RecvBuff[i], 1);
 		SSP0Send(0xff, 1);
 		rspn[i] = SSP0Receive();
+		//uprintf("rspn: %02x\r\n", rspn[i]);
 		if (rspn[i] != 0xff)	j++;
 	}
 	return j;
@@ -40,7 +49,7 @@ unsigned char cek_versi2_sdc()	{
 	unsigned char strHrp[] = { 0x00, 0x00, 0x01, 0xAA };
 	Microsd_SendCmd( CMD8, 0x000001AA );
 	rsp = respon_SDcmd( strRsp, R7_RESPONSE_SIZE );
-	uprintf(" respon : %02x %02x %02x %02x\r\n", strRsp[0], strRsp[1], strRsp[2], strRsp[3]);
+	//uprintf(" respon : %02x %02x %02x %02x\r\n", strRsp[0], strRsp[1], strRsp[2], strRsp[3]);
 	
 	if (rsp == R7_RESPONSE_SIZE)	{
 		for (i=0; i<R7_RESPONSE_SIZE; i++)		{
@@ -50,7 +59,7 @@ unsigned char cek_versi2_sdc()	{
 		
 		//uprintf("cc: %d\r\n", cc);
 		if (cc==R7_RESPONSE_SIZE)	{
-			uprintf("support SDC v2\r\n");
+			uprintf("support SDC v2. ");
 			versi = 2;
 		} else {
 			uprintf("tidak support SDC v2\r\n");
@@ -92,7 +101,7 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 		i++;
 	} while(response == 0xFF);
 
-	uprintf("respon[%d]: %02x\r\n", i, response);
+	//uprintf("respon[%d]: %02x\r\n", i, response);
 
 	// Following any command, the SD Card needs 8 clocks to finish up its work.
 	// (from SanDisk SD Card Product Manual v1.9 section 5.1.8)
@@ -104,13 +113,13 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 }
 
 
-void init_sdc()		{
+void init_sdc(void)		{
 	//uprintf("--> %s\r\n", __FUNCTION__);
 	unsigned int i = 0;
 	unsigned char status, v2=0;
 	
-	setup_spi_ssp0_lama();
-	init_ssp0_lama();
+	setup_spi_ssp0();
+	init_ssp0(SCK_LAMA);
 
 	for(status = 0; status < 10; ++status)	{
 		for(i = 0; i; i++);
@@ -122,7 +131,7 @@ void init_sdc()		{
 	// Wait for the SD Card to go into IDLE state
 	i = 0;
 	do	{
-		unsigned char CMD0_GO_IDLE_STATE[] = {0x00,0x00,0x00,0x00,0x00,0x95};
+		unsigned char CMD0_GO_IDLE_STATE[] = { 0x00,0x00,0x00,0x00,0x00,0x95 };
 		status = SD_WriteCmd(CMD0_GO_IDLE_STATE);
 		//status = Microsd_SendCmd( CMD0, 0x00000000);
 		// fail and return
@@ -130,73 +139,40 @@ void init_sdc()		{
 			return 1;
 		}
 	} while( status != 0x01 );
-	uprintf("---> CMD0_GO_IDLE_STATE status[%d] : %d\r\n", i, status);
+	//uprintf("---> CMD0_GO_IDLE_STATE status[%d] : %d\r\n", i, status);
 	
 	v2 = cek_versi2_sdc();
 	
 	i=0;
 	do	{
-		//unsigned char cmdSDcmd41[] = { 41,0x40,0x00,0x00,0x00,0xe5 };
-		//status = SD_WriteCmd(cmdSDcmd41);
-		Microsd_SendCmd( CMD41, 0x00000000);
-		respon_SDcmd( &status, R1_RESPONSE_SIZE );
-		uprintf("---> CMD41_SD_SEND_OP_COND status[%d] : %02x\r\n", i, status);
-		// fail and return
-		if (i++ > 25)	{
-			return 1;
-		}
-	} while( status != 0x00 );
-	uprintf("---> CMD41_SD_SEND_OP_COND status[%d] : %02x\r\n", i, status);
-	
-	#if 0
-	
-	unsigned char CMD8_SEND_IF_COND[] = { SEND_IF_COND,0x00,0x00,0x01,0x69,0xFB};
-	i = 0;
-	do	{
-		status = SD_WriteCmd(CMD8_SEND_IF_COND);
-		//qsprintf("status[%d] : %d\r\n", i, status);
-		// fail and return
-		//uprintf("---> %d ", i);
-		if (i++ > 100)	{
-			return 1;
-		}
-	} while( status != 0x01 );
-	uprintf("---> CMD0_GO_IDLE_STATE status[%d] : %d\r\n", i, status);
-	
+		unsigned char CMD55_APP_CMD[] = {55,0x00,0x00,0x00,0x00,0xFF};
+		status = SD_WriteCmd(CMD55_APP_CMD); // Do not check response here
+		//uprintf("---> CMD55_APP_CMD status[%d] : %d\r\n", i, status);
 
-	// Wait for SD Card to initialize
-	unsigned char CMD1_SEND_OP_COND[] = {0x01,0x00,0x00,0x00,0x00,0xFF};
-
-	i = 0;
-	do	{
-		status = SD_WriteCmd(CMD1_SEND_OP_COND);
-		if(i++ > 50)	{
+		if (status==0x01)	{
+			unsigned char cmdSDcmd41[] = { 41,0x40,0x00,0x00,0x00,0xe5 };		// kingston 4GB
+			status = SD_WriteCmd(cmdSDcmd41);
+			//uprintf("---> CMD41_SD_SEND_OP_COND status[%d] : %02x\r\n", i, status);
+		}
+		// fail and return
+		if (i++ > 20)	{
 			return 2;
 		}
-	} while( (status & R1_IN_IDLE_STATE) != 0x01 );		// R1_IN_IDLE_STATE = 0x01
-	uprintf("---> CMD1_SEND_OP_COND status[%d] : %d\r\n", i, status);
+	} while( status != 0x00 );
 	
-	// Send CMD55, required to precede all "application specific" commands
-	unsigned char CMD55_APP_CMD[] = {55,0x00,0x00,0x00,0x00,0xFF};
-	status = SD_WriteCmd(CMD55_APP_CMD); // Do not check response here
-	uprintf("---> CMD55_APP_CMD status[%d] : %d\r\n", i, status);
-
-	// Send the ACMD41 command to initialize SD Card mode (not supported by MMC cards)
-	i = 0;
-	unsigned char ACMD41_SD_SEND_OP_COND[] = {41,0x00,0x00,0x00,0x00,0xFF};
-	do	{
-		status = SD_WriteCmd(ACMD41_SD_SEND_OP_COND);
-		// Might return 0x04 for Invalid Command if MMC card is connected
-
-		if(i++ > 50)	{
-			return 3;
-		}
-	} while( (status & R1_IN_IDLE_STATE) != 0 );
-	uprintf("---> ACMD41_SD_SEND_OP_COND status[%d] : %d\r\n", i, status);
+	unsigned char CMD58_APP_CMD[] = { 58,0x00,0x00,0x00,0x00,0xFF };
+	status = SD_WriteCmd(CMD58_APP_CMD); // Do not check response here
+	//uprintf("---> CMD58_APP_CMD status[%d] : %d\r\n", i, status);
+	if (status == 0x01)	{
+		uprintf("OCR : BLOCK ADDRESS [1]\r\n");
+	} else {
+		uprintf("OCR : BYTE ADDRESS  [0]\r\n");
+	}
+	vTaskDelay(200);
+	//init_ssp0(SCK_KILAT);
+	st_hw.sdc = 1;
 	
-	setup_spi_ssp0_kilat();
-	init_ssp0_kilat();
-	#endif
+	return 0;
 }
 
 
@@ -263,7 +239,7 @@ unsigned char Microsd_SendCmd(unsigned char cmd_idx, unsigned int arg)	{
 	MessBuff[4] = (unsigned char) ( arg & 0x000000FF);
 	MessBuff[5] = ( Microsd_crc7(MessBuff) | 0x01 );
 
-	#if 1
+	#if 0
 	for(i=0; i<6; i++)	{
 		uprintf("%02x ", MessBuff[i]);
 	}

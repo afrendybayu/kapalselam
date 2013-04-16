@@ -35,12 +35,13 @@
 #define SSP_BSY		BIT(4)
 
 #define FIFO_SSP	8
-
+#define SCK_LAMA	200
+#define SCK_KILAT	3
 
 void init_spi0();
 char spiPut (char valueIn);
 
-void init_ssp0();
+void init_ssp0(unsigned char waktu);
 void SSP0Send( unsigned char buf, short Length );
 unsigned char SSP0Receive( void );
 

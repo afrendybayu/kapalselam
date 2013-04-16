@@ -26,13 +26,17 @@ int ch;
 
 	#ifdef PAKAI_SDCARD
 		st_hw.sdc = 0;
-		init_sdc();
+		if (cek_ins_sdc())	{
+			init_sdc();
+		} else {
+			uprintf("___TIDAK ada SD Card !____\r\n");
+		}
 	#endif
 	
 	#ifdef PAKAI_ADC_7708
 		st_hw.adc = 0;
-		setup_ad7708();
-		init_ad7708();
+		if (setup_ad7708()==0)
+			uprintf("___ADC TIDAK dikenali !____\r\n");
 	#endif
 	
 	st_hw.init++;

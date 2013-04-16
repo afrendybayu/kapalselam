@@ -107,7 +107,7 @@
 	#define PAKAI_SDCARD
 #endif
 
-//#define PAKAI_SPI_SSP1
+#define PAKAI_SPI_SSP1
 #ifdef  PAKAI_SPI_SSP1
 	#define PAKAI_ADC_7708 
 #endif

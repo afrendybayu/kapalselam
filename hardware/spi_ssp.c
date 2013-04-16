@@ -3,8 +3,6 @@
 #include "lpc23xx.h"
 #include "spi_ssp.h"
 #include "adc/ad7708.h"
-//#include "stdio.h"
-//#include "stdlib.h"
 
 // pada santer 
 //   SPI : -
@@ -30,7 +28,7 @@ init_ssp0_sdc()		{
 	
 }
 
-void init_ssp0_lama()	{
+void init_ssp0(unsigned char waktu)	{
 	char i;   
 	volatile char dummy;   
 	portENTER_CRITICAL();
@@ -38,27 +36,12 @@ void init_ssp0_lama()	{
 	SSP0CR1	 = 0;
 	//SSP1CR0	 = SSP_SCR2 | SSP_CPHA | SSP_CPOL | SSP_DDS8;
 	SSP0CR0	 = SSP_DDS8;
-	SSP0CPSR = 200;		// range : 2-254 >> 300kHz (bisa 20-25MHz SDC)
 	
-	for (i=0; i<FIFO_SSP; i++)	{
-		dummy = SSP0DR;
-	}
-	
-	// enable master
-	SSP0CR1 = SSP_SSE;
-	portEXIT_CRITICAL();
-}
-
-void init_ssp0_kilat()	{
-	char i;   
-	volatile char dummy;   
-	portENTER_CRITICAL();
-	
-	SSP0CR1	 = 0;
-	//SSP1CR0	 = SSP_SCR2 | SSP_CPHA | SSP_CPOL | SSP_DDS8;
-	SSP0CR0	 = SSP_SCR2 | SSP_DDS8;
-	SSP0CPSR = 6;		// range : 2-254 >> 10MHz (bisa 20-25MHz SDC)
-	
+	if (waktu == SCK_KILAT)
+		SSP0CPSR = 6;		// range : 2-254 >> 10MHz (bisa 20-25MHz SDC)
+	else
+		SSP0CPSR = 200;		// range : 2-254 >> 300kHz (bisa 20-25MHz SDC)
+		
 	for (i=0; i<FIFO_SSP; i++)	{
 		dummy = SSP0DR;
 	}

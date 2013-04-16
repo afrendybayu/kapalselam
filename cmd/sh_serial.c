@@ -178,7 +178,7 @@ char s[30];
 		vTaskDelay(100);
 	} while (st_hw.init != uxTaskGetNumberOfTasks());
 	
-	
+	vTaskDelay(100);
 	sprintf(s, "%s$ ", PROMPT);
 	tinysh_set_prompt(s);
 	tinysh_char_in('\n');

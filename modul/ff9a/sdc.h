@@ -2,10 +2,6 @@
 #ifndef __M_SDCARD__
 #define __M_SDCARD__
 
-#define SCK_LAMA			200
-#define SCK_KILAT			3
-
-
 #define R1_IN_IDLE_STATE    (1<<0)   // The card is in idle state and running initializing process.
 #define R1_ERASE_RESET      (1<<1)   // An erase sequence was cleared before executing because of an out of erase sequence command was received.
 #define R1_ILLEGAL_COMMAND  (1<<2)   // An illegal command code was detected
@@ -64,7 +60,14 @@ typedef struct {
 	unsigned char	Status;        // microSD status, use SD_STATUS_*_MASK
 } Microsd;
 
+void init_sdc();
+inline unsigned char cek_sdc();
+void SD_kirimCmd(unsigned char* cmd);
+unsigned char respon_SDcmd(unsigned char* rspn, int length);
 unsigned char cek_versi2_sdc();
 unsigned char Microsd_SendCmd(unsigned char cmd_idx, unsigned int arg);
+unsigned char Microsd_crc7(unsigned char *MessBuff);
+unsigned short Microsd_crc16(unsigned char *MessBuff, unsigned int len);
+unsigned char SD_WriteCmd(unsigned char* cmd);
 
 #endif

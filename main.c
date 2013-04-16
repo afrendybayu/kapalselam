@@ -199,10 +199,6 @@ extern struct t2_konter konter;
 extern unsigned int giliran;
 
 #if 0
-inline unsigned char cek_sdc()	{
-	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
-	return PORT2_INPUT(INS_SDC);
-}
 
 inline unsigned char cek_edy()	{
 	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);

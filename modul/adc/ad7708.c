@@ -106,7 +106,10 @@ unsigned char setup_ad7708()	{
 	
 	adaADC = 5;
 	st_hw.adc = 1;
+	
 	uprintf("Mulai koleksi data ADC .....0x%02x\r\n", cek_adc_modex());
+	init_ad7708();
+	
 	return adaADC;
 }
 
