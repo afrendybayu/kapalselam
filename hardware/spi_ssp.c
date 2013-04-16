@@ -25,7 +25,12 @@ char spiPut (char valueIn)	{
 #endif
 
 // untuk SD Card
-void init_ssp0()	{
+
+init_ssp0_sdc()		{
+	
+}
+
+void init_ssp0_lama()	{
 	char i;   
 	volatile char dummy;   
 	portENTER_CRITICAL();
@@ -33,6 +38,25 @@ void init_ssp0()	{
 	SSP0CR1	 = 0;
 	//SSP1CR0	 = SSP_SCR2 | SSP_CPHA | SSP_CPOL | SSP_DDS8;
 	SSP0CR0	 = SSP_DDS8;
+	SSP0CPSR = 200;		// range : 2-254 >> 300kHz (bisa 20-25MHz SDC)
+	
+	for (i=0; i<FIFO_SSP; i++)	{
+		dummy = SSP0DR;
+	}
+	
+	// enable master
+	SSP0CR1 = SSP_SSE;
+	portEXIT_CRITICAL();
+}
+
+void init_ssp0_kilat()	{
+	char i;   
+	volatile char dummy;   
+	portENTER_CRITICAL();
+	
+	SSP0CR1	 = 0;
+	//SSP1CR0	 = SSP_SCR2 | SSP_CPHA | SSP_CPOL | SSP_DDS8;
+	SSP0CR0	 = SSP_SCR2 | SSP_DDS8;
 	SSP0CPSR = 6;		// range : 2-254 >> 10MHz (bisa 20-25MHz SDC)
 	
 	for (i=0; i<FIFO_SSP; i++)	{
@@ -40,7 +64,7 @@ void init_ssp0()	{
 	}
 	
 	// enable master
-	SSP1CR1 = SSP_SSE;
+	SSP0CR1 = SSP_SSE;
 	portEXIT_CRITICAL();
 }
 

@@ -28,7 +28,7 @@ void setup_hardware()	{
 	#endif
 	
 	#ifdef PAKAI_SPI_SSP0
-		setup_spi_ssp0();
+
 	#endif
 
 	#ifdef PAKAI_SPI_SSP1
@@ -84,7 +84,7 @@ void init_hardware()	{
 	gpio_int_init();
 	
 	#ifdef PAKAI_SPI_SSP0
-		init_ssp0();
+		//init_ssp0();
 	#endif
 	
 	#ifdef PAKAI_SPI_SSP1
@@ -97,7 +97,7 @@ void init_hardware()	{
 	#endif
 	
 	#ifdef PAKAI_SDCARD
-		//init_sdc();
+		
 	#endif 
 }
 
@@ -225,16 +225,16 @@ void gpio_int_init()	{
 	IO2_INT_EN_R |= iKonter_1 | iKonter_2 | iKonter_3 | iKonter_4 | iKonter_5;
 	IO0_INT_EN_R |= iKonter_6 | iKonter_7 | iKonter_8 | iKonter_9 | iKonter_10;
 	
-	//#ifdef PAKAI_ADC_7708
-	FIO2DIR		 &= ~(RDY_AD7708);
-	IO2_INT_EN_F |= RDY_AD7708;
-	//#endif
+	#ifdef PAKAI_ADC_7708
+	//FIO2DIR		 &= ~(RDY_AD7708);
+	//IO2_INT_EN_F |= RDY_AD7708;
+	#endif
 
 	portEXIT_CRITICAL();
 	//uprintf("%s...masuk\r\n", __FUNCTION__);
 }
 
-#if 1
+#ifdef PAKAI_ADC_7708
 void adc_int_init()	{
 	extern void ( adc_ISR_Wrapper )( void );
 

@@ -198,6 +198,7 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 extern struct t2_konter konter;
 extern unsigned int giliran;
 
+#if 0
 inline unsigned char cek_sdc()	{
 	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
 	return PORT2_INPUT(INS_SDC);
@@ -207,6 +208,7 @@ inline unsigned char cek_edy()	{
 	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
 	return PORT2_INPUT(RDY_AD7708);
 }
+#endif
 
 inline void stat_ps()	{
 	st_hw.idle   = st_hw.idle_c;
@@ -216,14 +218,15 @@ inline void stat_ps()	{
 }
 
 void vLedTask( void *pvParameters )	{
-	st_hw.init++;
+	
 	char a=0, b=1, i=0;
 	char ss[6];
 	portTickType xLastWakeTime;
 	const portTickType xFrequency = 500;
 	
-	vTaskDelay(100);
-	uprintf("  task : %s\r\n", __FUNCTION__);
+	vTaskDelay(10);
+	//uprintf("  task : %s\r\n", __FUNCTION__);
+	st_hw.init++;
 	do	{
 		vTaskDelay(100);
 		FIO1PIN ^= LED_UTAMA;
@@ -238,7 +241,10 @@ void vLedTask( void *pvParameters )	{
 		
 		hitung_rpm();
 		data_frek_rpm();
+		
+		#ifdef PAKAI_ADC_7708
 		data_adc();
+		#endif
 		// simpan_sdcard();		// simpan ke SDcard
 
 		

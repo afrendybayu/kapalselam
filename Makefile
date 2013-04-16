@@ -135,7 +135,7 @@ SDC_SOURCE=	\
 		modul/ff9a/sdc.c	\
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
-THUMB_SOURCE += $(ADC_SOURCE)
+#THUMB_SOURCE += $(ADC_SOURCE)
 THUMB_SOURCE += $(SDC_SOURCE)
 
 		
@@ -147,7 +147,7 @@ ARM_SOURCE= \
 		modul/serial/serialISR.c	\
 		hardware/hwISR.c			\
 
-ARM_SOURCE += $(ADC_IRQ_SOURCE)
+#ARM_SOURCE += $(ADC_IRQ_SOURCE)
 
 THUMB_OBJS = $(THUMB_SOURCE:.c=.o)
 ARM_OBJS = $(ARM_SOURCE:.c=.o)

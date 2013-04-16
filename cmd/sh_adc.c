@@ -17,6 +17,6 @@ void cek_adc(void)	{
 	uprintf(" Ch | Kuantisasi |  Tegangan\r\n********************************\r\n");
 	for (i=0; i<JML_KANAL_ADC; i++ ) {
 		uprintf(" %2d | %10d | %8d V\r\n", \
-			i+1, adc.data[i], (int) data_f[20+i]*1000);
+			i+1, adc.data[i], (int) data_f[20+i]);
 	}
 }

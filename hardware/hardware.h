@@ -76,19 +76,36 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 					} while(0)
 		#endif
 
-		#ifdef PAKAI_SPI_SSP0
-			#define setup_spi_ssp0()	do {	\
+		#ifdef PAKAI_SPI_SSP0		// SDCard
+			#define CS_SDC			21
+			#define cs_SDCard()		FIO1CLR |= BIT(CS_SDC)
+			#define uncs_SDCard()	FIO1SET |= BIT(CS_SDC)
+			#define setup_spi_ssp0_lama()	do {	\
 						PCONP		|= BIT(21);	\
 						PINSEL3		|= BIT(9)  | BIT(8);	\
 						PINSEL3		|= BIT(11) | BIT(10);	\
 						PINSEL3		|= BIT(15) | BIT(14);	\
 						PINSEL3		|= BIT(17) | BIT(16);	\
+						SSP0CPSR 	 = 200;					\
+					} while(0)
+					//FIO1DIR		|= BIT(CS_SDC);			\
+					// PCONP default AKTIF
+					// PINSEL SPI : SCK0 | MISO0 | MOSI0
+					// clock : 300 kHz
+			#define cs_sdc()		
+			#define setup_spi_ssp0_kilat()	do {	\
+						PCONP		|= BIT(21);	\
+						PINSEL3		|= BIT(9)  | BIT(8);	\
+						PINSEL3		|= BIT(11) | BIT(10);	\
+						PINSEL3		|= BIT(15) | BIT(14);	\
+						PINSEL3		|= BIT(17) | BIT(16);	\
+						SSP0CPSR 	 = 3;					\
 					} while(0)
 					// PCONP default AKTIF
 					// PINSEL SPI : SCK0 | SSEL0 | MISO0 | MOSI0
 		#endif
 		
-		#ifdef PAKAI_SPI_SSP1
+		#ifdef PAKAI_SPI_SSP1		// ADC AD7708
 			#define setup_spi_ssp1()	do {	\
 						PCONP		|= BIT(10);	\
 						PINSEL0		|= BIT(13);	\
@@ -111,8 +128,6 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 					// PINSEL SPI : SCK1 | MISO1 | MOSI1
 					// PCLK/8 ~ 133ns
 		#endif
-
-
 
 		#ifdef PAKAI_ADC_7708
 			#define RDY_AD7708		11		// P211

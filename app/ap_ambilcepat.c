@@ -20,13 +20,13 @@ int ch;
 	/* Just to stop compiler warnings. */
 	( void ) pvParameters;
 	vTaskDelay(200);
-	uprintf("  task : %s\r\n", __FUNCTION__);
+	//uprintf("  task : %s\r\n", __FUNCTION__);
 	
 	reset_konter();
 
 	#ifdef PAKAI_SDCARD
 		st_hw.sdc = 0;
-		//init_sdc();
+		init_sdc();
 	#endif
 	
 	#ifdef PAKAI_ADC_7708
@@ -38,8 +38,7 @@ int ch;
 	st_hw.init++;
 	for( ;; )	{
 		
-		
-		
+
 		#ifdef PAKAI_ADC_7708
 			//if (adc.ambil == 1)	{
 				if (cek_adc_statusx() & ADC_RDY)	{	//	0x81 & 0x80

@@ -19,6 +19,8 @@
 #define JML_SUMBER		2
 #define PER_SUMBER		20
 
+#define ANGKA_PENTING	1000
+
 #ifdef PAKAI_RELAY
 	#define JML_RELAY		8
 	#define JML_TITIK_DATA	(JML_SUMBER * PER_SUMBER)+JML_RELAY

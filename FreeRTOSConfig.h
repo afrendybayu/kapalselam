@@ -97,7 +97,6 @@
 
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
-#define PAKAI_SDCARD
 
 #define ST_LED			2
 #define ST_SHELL		15
@@ -108,7 +107,7 @@
 	#define PAKAI_SDCARD
 #endif
 
-#define PAKAI_SPI_SSP1
+//#define PAKAI_SPI_SSP1
 #ifdef  PAKAI_SPI_SSP1
 	#define PAKAI_ADC_7708 
 #endif
