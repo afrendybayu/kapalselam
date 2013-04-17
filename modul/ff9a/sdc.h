@@ -60,7 +60,7 @@ typedef struct {
 	unsigned char	Status;        // microSD status, use SD_STATUS_*_MASK
 } Microsd;
 
-void init_sdc();
+unsigned char init_sdc(void);
 inline unsigned char cek_sdc();
 void SD_kirimCmd(unsigned char* cmd);
 unsigned char respon_SDcmd(unsigned char* rspn, int length);

@@ -8,14 +8,14 @@
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"		/* FatFs lower layer API */
-#include "usbdisk.h"	/* Example: USB drive control */
-#include "atadrive.h"	/* Example: ATA drive control */
-#include "sdcard.h"		/* Example: MMC/SDC contorl */
+//#include "usbdisk.h"	/* Example: USB drive control */
+//#include "atadrive.h"	/* Example: ATA drive control */
+//#include "sdcard.h"		/* Example: MMC/SDC contorl */
+#include "../sdc.h"
+#include "monita.h"
 
 /* Definitions of physical drive number for each media */
-#define ATA		0
-#define MMC		1
-#define USB		2
+
 
 
 /*-----------------------------------------------------------------------*/
@@ -27,30 +27,45 @@ DSTATUS disk_initialize (
 )
 {
 	DSTATUS stat;
-	int result;
+	unsigned char result;
 
 	switch (drv) {
+	#ifdef PAKAI_ATA
 	case ATA :
 		result = ATA_disk_initialize();
 
 		// translate the reslut code here
 
 		return stat;
-
+	#endif
+	#ifdef PAKAI_MMC
 	case MMC :
 		result = MMC_disk_initialize();
 
 		// translate the reslut code here
 
 		return stat;
-
+	#endif
+	#ifdef PAKAI_USB_STORAGE
 	case USB :
 		result = USB_disk_initialize();
 
 		// translate the reslut code here
 
 		return stat;
+	#endif
+	
+	case SDC :
+		result = init_sdc();
+
+		// translate the reslut code here
+
+		return stat;
+	
+	case ROM :
+		return stat;
 	}
+	
 	return STA_NOINIT;
 }
 
@@ -68,26 +83,31 @@ DSTATUS disk_status (
 	int result;
 
 	switch (drv) {
+	#ifdef PAKAI_ATA
 	case ATA :
-		result = ATA_disk_status();
+		//result = ATA_disk_status();
 
 		// translate the reslut code here
 
 		return stat;
-
+	#endif
+	#ifdef PAKAI_MMC
 	case MMC :
-		result = MMC_disk_status();
+		//result = MMC_disk_status();
 
 		// translate the reslut code here
 
 		return stat;
-
+	#endif
+	
+	#ifdef PAKAI_USB_STORAGE
 	case USB :
-		result = USB_disk_status();
+		//result = USB_disk_status();
 
 		// translate the reslut code here
 
 		return stat;
+	#endif
 	}
 	return STA_NOINIT;
 }
@@ -109,6 +129,7 @@ DRESULT disk_read (
 	int result;
 
 	switch (drv) {
+	#ifdef PAKAI_ATA
 	case ATA :
 		// translate the arguments here
 
@@ -117,7 +138,8 @@ DRESULT disk_read (
 		// translate the reslut code here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_MMC
 	case MMC :
 		// translate the arguments here
 
@@ -126,7 +148,8 @@ DRESULT disk_read (
 		// translate the reslut code here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_USB_STORAGE
 	case USB :
 		// translate the arguments here
 
@@ -134,6 +157,14 @@ DRESULT disk_read (
 
 		// translate the reslut code here
 
+		return res;
+	#endif
+	case SDC : 
+	
+		return res;
+	
+	case ROM :
+	
 		return res;
 	}
 	return RES_PARERR;
@@ -157,33 +188,45 @@ DRESULT disk_write (
 	int result;
 
 	switch (drv) {
+	#ifdef PAKAI_ATA
 	case ATA :
 		// translate the arguments here
 
-		result = ATA_disk_write(buff, sector, count);
+		//result = ATA_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_MMC
 	case MMC :
 		// translate the arguments here
 
-		result = MMC_disk_write(buff, sector, count);
+		//result = MMC_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_USB_STORAGE
 	case USB :
 		// translate the arguments here
 
-		result = USB_disk_write(buff, sector, count);
+		//result = USB_disk_write(buff, sector, count);
 
 		// translate the reslut code here
 
 		return res;
+	#endif
+	case SDC : 
+	
+		return res;
+	
+	case ROM :
+	
+		return res;
 	}
+	
 	return RES_PARERR;
 }
 #endif
@@ -204,6 +247,7 @@ DRESULT disk_ioctl (
 	int result;
 
 	switch (drv) {
+	#ifdef PAKAI_ATA
 	case ATA :
 		// pre-process here
 
@@ -212,7 +256,8 @@ DRESULT disk_ioctl (
 		// post-process here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_MMC
 	case MMC :
 		// pre-process here
 
@@ -221,7 +266,8 @@ DRESULT disk_ioctl (
 		// post-process here
 
 		return res;
-
+	#endif
+	#ifdef PAKAI_USB_STORAGE
 	case USB :
 		// pre-process here
 
@@ -230,7 +276,19 @@ DRESULT disk_ioctl (
 		// post-process here
 
 		return res;
+	#endif
+	case SDC : 
+	
+		return res;
+	
+	case ROM :
+	
+		return res;
 	}
 	return RES_PARERR;
 }
 #endif
+
+unsigned int get_fattime (void)	{
+	
+}

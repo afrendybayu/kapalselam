@@ -26,8 +26,10 @@ int ch;
 
 	#ifdef PAKAI_SDCARD
 		st_hw.sdc = 0;
+		
 		if (cek_ins_sdc())	{
-			init_sdc();
+			disk_initialize(SDC);
+			//init_sdc();
 		} else {
 			uprintf("___TIDAK ada SD Card !____\r\n");
 		}

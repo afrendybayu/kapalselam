@@ -113,7 +113,7 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 }
 
 
-void init_sdc(void)		{
+unsigned char init_sdc(void)		{
 	//uprintf("--> %s\r\n", __FUNCTION__);
 	unsigned int i = 0;
 	unsigned char status, v2=0;

@@ -15,6 +15,12 @@
 #define  fENERGI		251
 #define	 sADC_ORI		9
 
+#define ATA		0
+#define MMC		1
+#define USB		2
+#define ROM		3
+#define SDC		4
+
 
 #define JML_SUMBER		2
 #define PER_SUMBER		20

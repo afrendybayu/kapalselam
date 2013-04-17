@@ -132,7 +132,9 @@ ADC_SOURCE= \
 		app/ap_adc.c		\
 
 SDC_SOURCE=	\
-		modul/ff9a/sdc.c	\
+		modul/ff9a/sdc.c		\
+		modul/ff9a/src/diskio.c	\
+		modul/ff9a/src/ff.c		\
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
 THUMB_SOURCE += $(ADC_SOURCE)
