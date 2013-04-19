@@ -20,6 +20,10 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef __M_TINYSH__
+#define __M_TINYSH__
+
+
 typedef void (*tinysh_fnt_t)(int argc, char **argv);
 
 typedef struct tinysh_cmd_t {
@@ -66,3 +70,4 @@ unsigned long tinysh_atoxi(char *s);
 }
 #endif
 
+#endif

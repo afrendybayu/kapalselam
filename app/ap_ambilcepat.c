@@ -29,14 +29,17 @@ int ch;
 		
 		if (cek_ins_sdc())	{
 			disk_initialize(SDC);
-			//init_sdc();
+			//ch = init_sdc();
+			if (ch)		uprintf("___init SD ERROR !!___\r\n");
 		} else {
 			uprintf("___TIDAK ada SD Card !____\r\n");
 		}
+		//vTaskDelay(10); ---> malah error tidak dikenali
 	#endif
 	
 	#ifdef PAKAI_ADC_7708
 		st_hw.adc = 0;
+		uprintf("\r\n");
 		if (setup_ad7708()==0)
 			uprintf("___ADC TIDAK dikenali !____\r\n");
 	#endif

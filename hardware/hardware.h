@@ -6,12 +6,15 @@
 #include "task.h"
 #include "lpc23xx.h"
 #include "cpu_setup.h"
+#include <time.h>
 
 void setup_hardware();
 void init_hardware();
 void gpio_init();
 void gpio_int_init();
 int setup_konter_onoff(unsigned int kanale, unsigned char statk);
+
+void rtcWrite(struct tm *newTime);
 
 #define PORT2_INPUT(kanal)	(FIO2PIN & BIT(kanal)) ? 1 : 0;
 #define PORT1_INPUT(kanal)	(FIO1PIN & BIT(kanal)) ? 1 : 0;
@@ -27,6 +30,19 @@ int setup_konter_onoff(unsigned int kanale, unsigned char statk);
 			#define setup_led_utama()	do {	\
 						FIO1DIR = LED_UTAMA;	\
 						FIO1CLR = LED_UTAMA;	\
+					} while(0)
+		#endif
+		
+		#ifdef PAKAI_RTC
+			#define setup_rtc()	do {				\
+						PCONP |= BIT(9);			\
+						RTC_CCR  = BIT(4);			\
+						RTC_AMR  = 0;				\
+						RTC_CIIR = 0;				\
+					} while(0)
+			#define start_rtc()	do {				\
+						RTC_CCR &= ~RTC_CCR_CTCRST;	\
+						RTC_CCR |= RTC_CCR_CLKEN;	\
 					} while(0)
 		#endif
 		

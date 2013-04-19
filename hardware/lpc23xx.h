@@ -1247,7 +1247,57 @@ Reset, and Code Security/Debugging */
 #define TxIR_CR3_Interrupt (1UL<<7)
 
 
+#define RTC_ILR_RTCCIF  (0x00000001)
+#define RTC_ILR_RTCALF  (0x00000002)
+#define RTC_ILR_MASK    (0x00000003)
 
+#define RTC_CCR_CLKEN   (0x00000001)
+#define RTC_CCR_CTCRST  (0x00000002)
+#define RTC_CCR_TEST    (0x0000000c)
+#define RTC_CCR_CLKSRC  (0x00000010)
+
+#define RTC_CIIR_IMSEC  (0x00000001)
+#define RTC_CIIR_IMMIN  (0x00000002)
+#define RTC_CIIR_IMHOUR (0x00000004)
+#define RTC_CIIR_IMDOM  (0x00000008)
+#define RTC_CIIR_IMDOW  (0x00000010)
+#define RTC_CIIR_IMDOY  (0x00000020)
+#define RTC_CIIR_IMMON  (0x00000040)
+#define RTC_CIIR_IMYEAR (0x00000080)
+#define RTC_CIIR_IMMASK (0x000000ff)
+
+#define RTC_AMR_AMRSEC  (0x00000001)
+#define RTC_AMR_AMRMIN  (0x00000002)
+#define RTC_AMR_AMRHOUR (0x00000004)
+#define RTC_AMR_AMRDOM  (0x00000008)
+#define RTC_AMR_AMRDOW  (0x00000010)
+#define RTC_AMR_AMRDOY  (0x00000020)
+#define RTC_AMR_AMRMON  (0x00000040)
+#define RTC_AMR_AMRYEAR (0x00000080)
+#define RTC_AMR_AMRMASK (0x000000ff)
+
+
+#define MEM_RTC_BASE_ADDR		0xE0084000
+#define MEM_RTC0	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x00))
+#define MEM_RTC1	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x04))
+#define MEM_RTC2	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x08))
+#define MEM_RTC3	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x0C))
+#define MEM_RTC4	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x10))
+#define MEM_RTC5	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x14))
+#define MEM_RTC6	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x18))
+#define MEM_RTC7	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x1C))
+#define MEM_RTC8	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x20))
+#define MEM_RTC9	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x24))
+#define MEM_RTC10	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x28))
+#define MEM_RTC11	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x2C))
+#define MEM_RTC12	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x30))
+#define MEM_RTC13	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x34))
+#define MEM_RTC14	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x38))
+#define MEM_RTC15	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x3C))
+#define MEM_RTC16	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x40))
+#define MEM_RTC17	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x44))
+#define MEM_RTC18	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x48))
+#define MEM_RTC19	(*(volatile unsigned int *)(MEM_RTC_BASE_ADDR + 0x4C))
 
 #endif  /* __LPC23xx_H */
 

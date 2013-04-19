@@ -2,6 +2,46 @@
 #ifndef __APP_MONITA__
 #define __APP_MONITA__
 
+#define JML_SECTOR_LPC 		28
+#define IAP_ADDRESS 		0x7FFFFFF1
+typedef void (*IAP)(unsigned int [],unsigned int[]);
+
+
+typedef struct	{
+  unsigned int ReturnCode;
+  unsigned int Result[4];
+} IAP_return_t;
+
+typedef enum IAP_STATUS_t {
+   CMD_SUCCESS = 0,         // Command was executed successfully.
+   INVALID_COMMAND = 1,     // Invalid command.
+   SRC_ADDR_ERROR = 2,      // Source address is not on a word boundary.
+   DST_ADDR_ERROR = 3,      // Destination address is not on a correct boundary.
+
+   SRC_ADDR_NOT_MAPPED = 4, // Source address is not mapped in the memory map.
+                            // Count value is taken in to consideration where
+                            // applicable.
+
+   DST_ADDR_NOT_MAPPED = 5, // Destination address is not mapped in the memory
+                            // map. Count value is taken in to consideration
+                            // where applicable.
+
+   COUNT_ERROR = 6,         // Byte count is not multiple of 4 or is not a
+                            // permitted value.
+
+   INVALID_SECTOR = 7,      // Sector number is invalid.
+   SECTOR_NOT_BLANK = 8,    // Sector is not blank.
+
+   SECTOR_NOT_PREPARED_FOR_WRITE_OPERATION = 9, // Command to prepare sector for
+                                                // write operation was not
+                                                // executed.
+
+   COMPARE_ERROR = 10,      // Source and destination data is not same.
+   BUSY = 11,               // Flash programming hardware interface is busy.
+} IAP_STATUS_t;
+
+//IAP_return_t iap_return;
+
 #define  sRPM			0
 #define	 sONOFF			1
 #define	 sPUSHBUTTON	2
@@ -36,8 +76,7 @@
 
 float data_f [ JML_TITIK_DATA ];
 
-#define IAP_LOCATION 0x7FFFFFF1
-typedef void (*IAP)(unsigned int [],unsigned int[]);
+
 
 // 32 KB
 #define ALMT_SEKTOR_8	0x08000
@@ -165,5 +204,65 @@ struct t_env {
 	char statusSlave;
 };
 struct t_env env;
+
+
+#ifdef PAKAI_RTC
+	unsigned char flagRTCc;
+	unsigned char flagRTCs;
+	unsigned char flagRTCm;
+	unsigned char flagRTCh;
+	unsigned char flagRTCd;
+	
+typedef struct __attribute__ ((packed)) {
+	union  {
+		struct	{
+			unsigned int counter   : 14;
+			unsigned int rsvd15_31 : 18;
+		};
+		unsigned int i;
+	};
+} rtcCTC_t;
+
+typedef struct __attribute__ ((packed))	{
+	union	{
+		struct	{
+			unsigned int seconds   : 6;
+			unsigned int rsvd7_6   : 2;
+			unsigned int minutes   : 6;
+			unsigned int rsvd14_15 : 2;
+			unsigned int hours     : 5;
+			unsigned int rsvd21_23 : 3;
+			unsigned int dow       : 3;
+			unsigned int rsvd27_31 : 5;
+		};
+		unsigned int i;
+	};
+} rtcCTIME0_t;
+
+typedef struct __attribute__ ((packed))	{
+	union	{
+		struct	{
+			unsigned int dom       : 5;
+			unsigned int rsvd5_7   : 3;
+			unsigned int month     : 4;
+			unsigned int rsvd12_15 : 4;
+			unsigned int year      : 12;
+			unsigned int rsvd28_31 : 4;
+		};
+		unsigned int i;
+	};
+} rtcCTIME1_t;
+
+typedef struct __attribute__ ((packed))	{
+	union	{
+		struct 	{
+			unsigned int doy       : 12;
+			unsigned int rsvd12_31 : 20;
+		};
+		unsigned int i;
+	};
+} rtcCTIME2_t;
+	
+#endif
 
 #endif

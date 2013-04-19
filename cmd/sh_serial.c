@@ -22,9 +22,14 @@
 #include "sh_data.h"
 //#include <stdio.h>
 #include "monita.h"
+#include "iap.h"
 
 #ifdef PAKAI_ADC_7708
 	#include "sh_adc.h"
+#endif
+
+#ifdef PAKAI_RTC
+	#include "sh_rtc.h"
 #endif
 
 static xComPortHandle xPort;
@@ -97,6 +102,8 @@ const unsigned portBASE_TYPE uxQueueLength = 128;
 }
 
 void init_banner()	{
+	IAP_return_t iap_return;
+	iap_return = iapReadSerialNumber();
 //const unsigned portBASE_TYPE uxQueueSize = 10;
 //const unsigned portBASE_TYPE uxQueueLength = 30;
 	//xPrintQueue = xQueueCreate( uxQueueSize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
@@ -107,7 +114,15 @@ void init_banner()	{
 	uprintf("\r\n\r\nDaun Biru Engineering, Maret 2013\r\n");
 	uprintf("==================================\r\n");
 	uprintf("monita %s %s\r\n", BOARD_SANTER, BOARD_SANTER_v1_0);
-	uprintf("CPU LPC 2387, %d MHz\r\n", configCPU_CLOCK_HZ/1000000);
+	uprintf("CPU LPC 2387, %d MHz", configCPU_CLOCK_HZ/1000000);
+	if (iap_return.ReturnCode == 0)
+		uprintf(", P/N 0x%08X", iap_return.Result[0]);
+	iap_return = iapReadBootVersion();
+	if (iap_return.ReturnCode == 0)
+		uprintf(", BootV0x%04X\r\n", (unsigned short) iap_return.Result[0]);
+	else {
+		uprintf("-------\r\n");
+	}
 	uprintf("FreeRTOS %s by Richard Barry\r\n", tskKERNEL_VERSION_NUMBER);		//  oleh Richard Barry
 	uprintf("ARM-GCC %s : %s : %s\r\n", __VERSION__, __DATE__, __TIME__);
 	
@@ -145,11 +160,19 @@ void cmd_shell()	{
 	tinysh_add_command(&task_list_cmd);
 //	tinysh_add_command(&task_run_time_cmd);
 	tinysh_add_command(&idle_tick_cmd);
+	tinysh_add_command(&sektor_free_cmd);
 	
 	tinysh_add_command(&cek_data_cmd);
 	
 	#ifdef PAKAI_ADC_7708
 	tinysh_add_command(&cek_adc_cmd);
+	#endif
+	
+	#ifdef PAKAI_RTC
+	tinysh_add_command(&set_date_cmd);
+	//tinysh_add_command(&cek_flag_rtc_cmd);
+	//tinysh_add_command(&init_rtc_cmd);
+	tinysh_add_command(&kalender_rtc_cmd);
 	#endif
 	
 }

@@ -7,6 +7,7 @@
 /* storage control module to the FatFs module with a defined API.        */
 /*-----------------------------------------------------------------------*/
 
+#include "FreeRTOS.h"
 #include "diskio.h"		/* FatFs lower layer API */
 //#include "usbdisk.h"	/* Example: USB drive control */
 //#include "atadrive.h"	/* Example: ATA drive control */
@@ -16,7 +17,7 @@
 
 /* Definitions of physical drive number for each media */
 
-
+#ifdef PAKAI_SDCARD
 
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */
@@ -292,3 +293,5 @@ DRESULT disk_ioctl (
 unsigned int get_fattime (void)	{
 	
 }
+
+#endif

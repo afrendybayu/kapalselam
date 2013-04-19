@@ -95,9 +95,11 @@
 /                   Changed option name _FS_SHARE to _FS_LOCK.
 /---------------------------------------------------------------------------*/
 
+#include "FreeRTOS.h"
 #include "ff.h"			/* FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
 
+#ifdef PAKAI_SDCARD
 
 /*--------------------------------------------------------------------------
 
@@ -4137,3 +4139,6 @@ int f_printf (
 
 #endif /* !_FS_READONLY */
 #endif /* _USE_STRFUNC */
+
+
+#endif

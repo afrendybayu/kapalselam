@@ -12,6 +12,10 @@
 #include "spi_ssp.h"
 #include "hardware.h"
 
+#ifdef PAKAI_SDCARD
+
+//#define DEBUG_SDC
+
 extern struct t_st_hw st_hw;
 
 inline unsigned char cek_ins_sdc()	{
@@ -80,8 +84,10 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 	cmd[0]  = (cmd[0] & 0x3F) | 0x40;
 	cmd[5] |= (1<<0);
 	
-	//uprintf("%02x %02x %02x %02x %02x %02x\r\n", cmd[0],cmd[1],cmd[2],cmd[3],cmd[4],cmd[5]);
-
+	#ifdef DEBUG_SDC
+	uprintf("%02x %02x %02x %02x %02x %02x\r\n", cmd[0],cmd[1],cmd[2],cmd[3],cmd[4],cmd[5]);
+	#endif
+	
 	for(i = 0; i < 6; ++i)	{
 		SSP0Send(*cmd, 1);
 		//uprintf("%02x ", *cmd);
@@ -100,9 +106,10 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 		}
 		i++;
 	} while(response == 0xFF);
-
-	//uprintf("respon[%d]: %02x\r\n", i, response);
-
+	
+	#ifdef DEBUG_SDC
+	uprintf("respon[%d]: %02x\r\n", i, response);
+	#endif
 	// Following any command, the SD Card needs 8 clocks to finish up its work.
 	// (from SanDisk SD Card Product Manual v1.9 section 5.1.8)
 	//SPIWrite(0xFF); 
@@ -114,7 +121,10 @@ unsigned char SD_WriteCmd(unsigned char* cmd)	{
 
 
 unsigned char init_sdc(void)		{
-	//uprintf("--> %s\r\n", __FUNCTION__);
+	#ifdef DEBUG_SDC
+	uprintf("--> %s\r\n", __FUNCTION__);
+	#endif
+	
 	unsigned int i = 0;
 	unsigned char status, v2=0;
 	
@@ -139,20 +149,24 @@ unsigned char init_sdc(void)		{
 			return 1;
 		}
 	} while( status != 0x01 );
-	//uprintf("---> CMD0_GO_IDLE_STATE status[%d] : %d\r\n", i, status);
-	
+	#ifdef DEBUG_SDC
+	uprintf("---> CMD0_GO_IDLE_STATE status[%d] : %d\r\n", i, status);
+	#endif
 	v2 = cek_versi2_sdc();
 	
 	i=0;
 	do	{
 		unsigned char CMD55_APP_CMD[] = {55,0x00,0x00,0x00,0x00,0xFF};
 		status = SD_WriteCmd(CMD55_APP_CMD); // Do not check response here
-		//uprintf("---> CMD55_APP_CMD status[%d] : %d\r\n", i, status);
-
+		#ifdef DEBUG_SDC
+		uprintf("---> CMD55_APP_CMD status[%d] : %d\r\n", i, status);
+		#endif
 		if (status==0x01)	{
 			unsigned char cmdSDcmd41[] = { 41,0x40,0x00,0x00,0x00,0xe5 };		// kingston 4GB
 			status = SD_WriteCmd(cmdSDcmd41);
-			//uprintf("---> CMD41_SD_SEND_OP_COND status[%d] : %02x\r\n", i, status);
+			#ifdef DEBUG_SDC
+			uprintf("---> CMD41_SD_SEND_OP_COND status[%d] : %02x\r\n", i, status);
+			#endif
 		}
 		// fail and return
 		if (i++ > 20)	{
@@ -251,3 +265,5 @@ unsigned char Microsd_SendCmd(unsigned char cmd_idx, unsigned int arg)	{
 	//return Microsd_GetResponse(SDPtr);
 	return 0;
 }
+
+#endif

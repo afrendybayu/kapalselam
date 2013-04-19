@@ -27,6 +27,10 @@ void setup_hardware()	{
 		setup_relay();
 	#endif
 	
+	#ifdef PAKAI_RTC
+		setup_rtc();
+	#endif
+	
 	#ifdef PAKAI_SPI_SSP0
 
 	#endif
@@ -72,7 +76,9 @@ void setup_hardware()	{
 }
 
 void init_hardware()	{
-	
+	#ifdef PAKAI_RTC
+		start_rtc();
+	#endif
 	
 	#ifdef PAKAI_LED_UTAMA
 
@@ -233,6 +239,30 @@ void gpio_int_init()	{
 	portEXIT_CRITICAL();
 	//uprintf("%s...masuk\r\n", __FUNCTION__);
 }
+
+#ifdef PAKAI_RTC
+void rtcWrite(struct tm *newTime)	{
+	portENTER_CRITICAL ();
+
+	RTC_CCR &= ~RTC_CCR_CLKEN;
+	RTC_CCR |=  RTC_CCR_CTCRST;
+
+	RTC_SEC   = newTime->tm_sec;
+	RTC_MIN   = newTime->tm_min;
+	RTC_HOUR  = newTime->tm_hour;
+	RTC_DOM   = newTime->tm_mday;
+	RTC_MONTH = newTime->tm_mon + 1;
+	RTC_YEAR  = newTime->tm_year + 1900;
+	RTC_DOW   = newTime->tm_wday;
+	RTC_DOY   = newTime->tm_yday + 1;
+
+	RTC_CCR &= ~RTC_CCR_CTCRST;
+	RTC_CCR |=  RTC_CCR_CLKEN;
+
+	portEXIT_CRITICAL ();
+}
+#endif
+
 
 #ifdef PAKAI_ADC_7708
 void adc_int_init()	{

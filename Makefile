@@ -105,6 +105,7 @@ THUMB_SOURCE= \
 		hardware/cpu_setup.c	\
 		hardware/syscalls.c		\
 		hardware/spi_ssp.c		\
+		hardware/iap.c			\
 		cmd/sh_hardware.c		\
 		cmd/sh_rtos.c			\
 		cmd/sh_data.c			\
@@ -131,6 +132,9 @@ ADC_SOURCE= \
 		modul/adc/ad7708.c	\
 		app/ap_adc.c		\
 
+RTC_SOURCE= \
+		cmd/sh_rtc.c		\
+
 SDC_SOURCE=	\
 		modul/ff9a/sdc.c		\
 		modul/ff9a/src/diskio.c	\
@@ -139,7 +143,7 @@ SDC_SOURCE=	\
 THUMB_SOURCE += $(SERIAL_SOURCE)
 THUMB_SOURCE += $(ADC_SOURCE)
 THUMB_SOURCE += $(SDC_SOURCE)
-
+THUMB_SOURCE += $(RTC_SOURCE)
 		
 ADC_IRQ_SOURCE= \
 		modul/adc/adcISR.c	\

@@ -97,6 +97,7 @@
 
 #define PAKAI_LED_UTAMA
 #define PAKAI_SHELL
+#define PAKAI_RTC
 
 #define ST_LED			2
 #define ST_SHELL		15
