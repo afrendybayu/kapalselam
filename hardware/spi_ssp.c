@@ -84,6 +84,10 @@ unsigned char SSP0Receive( void )	{
 	return x;
 }  
 
+unsigned char SSP0byte(unsigned char cmd)	{
+	SSP0Send(cmd, 1);
+	return SSP0Receive();
+}
 
 // untuk ADC_AD7708
 void init_ssp1()	{

@@ -2,17 +2,7 @@
 #ifndef __SH_RTC__
 #define __SH_RTC__
 
-struct rtc_time {
-  int	tm_sec;
-  int	tm_min;
-  int	tm_hour;
-  int	tm_mday;	// 1 - 31 /
-  int	tm_mon;		// 0 - 11 //
-  int	tm_year;
-  int	tm_wday;
-  int	tm_yday;
-  int	tm_isdst;
-};
+
 
 void set_date_kitab();
 void set_date(int argc, char **argv);

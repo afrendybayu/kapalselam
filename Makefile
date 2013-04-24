@@ -137,8 +137,9 @@ RTC_SOURCE= \
 
 SDC_SOURCE=	\
 		modul/ff9a/sdc.c		\
-		modul/ff9a/src/diskio.c	\
-		modul/ff9a/src/ff.c		\
+		modul/ff9b/src/diskio.c	\
+		modul/ff9b/src/ff.c		\
+		cmd/sh_sdc.c			\
 
 THUMB_SOURCE += $(SERIAL_SOURCE)
 THUMB_SOURCE += $(ADC_SOURCE)

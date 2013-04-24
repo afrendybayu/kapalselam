@@ -32,6 +32,10 @@
 	#include "sh_rtc.h"
 #endif
 
+#ifdef PAKAI_SDCARD
+	#include "sh_sdc.h"
+#endif
+
 static xComPortHandle xPort;
 static xQueueHandle xPrintQueue;
 xTaskHandle *hdl_shell;
@@ -175,6 +179,9 @@ void cmd_shell()	{
 	tinysh_add_command(&kalender_rtc_cmd);
 	#endif
 	
+	#ifdef PAKAI_SDCARD
+	tinysh_add_command(&cek_sdc_cmd);
+	#endif
 }
 
 static portTASK_FUNCTION( vComRxTask, pvParameters )		{

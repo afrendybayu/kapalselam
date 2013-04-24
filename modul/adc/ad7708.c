@@ -2,6 +2,9 @@
 #include "ad7708.h"
 #include "monita.h"
 
+#ifdef PAKAI_ADC_7708
+
+
 extern struct t_st_hw st_hw;
 extern struct t_adc adc;
 
@@ -200,3 +203,4 @@ void cek_adc_gain(void)	{
 	//return xx;
 }
 
+#endif

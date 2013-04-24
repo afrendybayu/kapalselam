@@ -198,13 +198,6 @@ static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 extern struct t2_konter konter;
 extern unsigned int giliran;
 
-#if 0
-
-inline unsigned char cek_edy()	{
-	//unsigned char a = ((FIO2PIN & BIT(INS_SDC)) >> INS_SDC);
-	return PORT2_INPUT(RDY_AD7708);
-}
-#endif
 
 inline void stat_ps()	{
 	st_hw.idle   = st_hw.idle_c;
@@ -224,8 +217,14 @@ void vLedTask( void *pvParameters )	{
 	//uprintf("  task : %s\r\n", __FUNCTION__);
 	st_hw.init++;
 	do	{
-		vTaskDelay(100);
-		FIO1PIN ^= LED_UTAMA;
+		vTaskDelay(400);
+		FIO1CLR = LED_UTAMA;
+		vTaskDelay(50);
+		FIO1SET = LED_UTAMA;
+		vTaskDelay(50);
+		FIO1CLR = LED_UTAMA;
+		vTaskDelay(50);
+		FIO1SET = LED_UTAMA;
 		pll_feed();
 	} while(st_hw.init != uxTaskGetNumberOfTasks());
 	

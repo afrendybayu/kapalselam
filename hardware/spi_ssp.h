@@ -44,6 +44,7 @@ char spiPut (char valueIn);
 void init_ssp0(unsigned char waktu);
 void SSP0Send( unsigned char buf, short Length );
 unsigned char SSP0Receive( void );
+unsigned char SSP0byte(unsigned char cmd);
 
 void init_ssp1();
 void SSP1Send( unsigned char buf, short Length );

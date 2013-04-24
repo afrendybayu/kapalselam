@@ -15,6 +15,7 @@
 #include "../sdc.h"
 #include "monita.h"
 
+
 /* Definitions of physical drive number for each media */
 
 #ifdef PAKAI_SDCARD
@@ -220,7 +221,7 @@ DRESULT disk_write (
 		return res;
 	#endif
 	case SDC : 
-	
+		
 		return res;
 	
 	case ROM :
@@ -291,7 +292,25 @@ DRESULT disk_ioctl (
 #endif
 
 unsigned int get_fattime (void)	{
+	unsigned int tw;
+	struct rtc_time waktu;
 	
+	rtcCTIME0_t ctime0;
+	rtcCTIME1_t ctime1;
+	rtcCTIME2_t ctime2;
+	ctime0.i = RTC_CTIME0; 
+	ctime1.i = RTC_CTIME1; 
+	ctime2.i = RTC_CTIME2;
+	
+	waktu.tm_sec  = ((int) (ctime0.seconds/2)) & 0x1F;
+	waktu.tm_min  = (ctime0.minutes << 5) & 0x7E0;
+	waktu.tm_hour = (ctime0.hours   << 11) & 0xF800;
+	waktu.tm_mday = (ctime1.dom     << 16) & 0x1F0000;
+	waktu.tm_mon  = ((ctime1.month+1) << 21) & 0x1E00000;
+	waktu.tm_year = ((ctime1.year-1980) << 25) & 0xFE000000;
+	
+	tw = waktu.tm_year | waktu.tm_mon | waktu.tm_mday | waktu.tm_hour | waktu.tm_min | waktu.tm_sec;
+	return tw;
 }
 
 #endif

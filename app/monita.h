@@ -262,7 +262,19 @@ typedef struct __attribute__ ((packed))	{
 		unsigned int i;
 	};
 } rtcCTIME2_t;
-	
+
+struct rtc_time {
+  int	tm_sec;
+  int	tm_min;
+  int	tm_hour;
+  int	tm_mday;	// 1 - 31 /
+  int	tm_mon;		// 0 - 11 //
+  int	tm_year;
+  int	tm_wday;
+  int	tm_yday;
+  int	tm_isdst;
+};
+
 #endif
 
 #endif

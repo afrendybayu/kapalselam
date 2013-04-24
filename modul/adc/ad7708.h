@@ -8,6 +8,7 @@
 #include "spi_ssp.h"
 #include "monita.h"
 
+#ifdef PAKAI_ADC_7708
 
 #define JML_KANAL_ADC		10
 
@@ -86,5 +87,7 @@ void set_xreg_adc(unsigned char reg, uchr *data, int length);
 void cek_xreg_adc(unsigned char reg, uchr *data, int length);
 int ambil_data_ad7708();
 unsigned char ada_data_ad7708();
+
+#endif
 
 #endif

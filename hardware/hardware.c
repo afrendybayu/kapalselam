@@ -81,7 +81,7 @@ void init_hardware()	{
 	#endif
 	
 	#ifdef PAKAI_LED_UTAMA
-
+		FIO1SET = LED_UTAMA;		// mati dulu;
 	#endif
 	
 	#ifdef PAKAI_SHELL

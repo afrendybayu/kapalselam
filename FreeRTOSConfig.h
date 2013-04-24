@@ -99,8 +99,8 @@
 #define PAKAI_SHELL
 #define PAKAI_RTC
 
-#define ST_LED			2
-#define ST_SHELL		15
+#define ST_LED			5
+#define ST_SHELL		20
 #define ST_SANTER		10
 
 #define PAKAI_SPI_SSP0

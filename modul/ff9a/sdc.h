@@ -18,10 +18,13 @@
 
 #define GO_IDLE_STATE		0
 #define SEND_IF_COND		8
+#define CSD					9
+#define CID					10
 #define SET_BLOCKLEN		16
 #define READ_SINGLE_BLOCK	17
 #define WRITE_BLOCK			24
 #define SD_SEND_OP_COND		41
+#define SCR					51
 #define APP_CMD				55
 #define READ_OCR			58
 #define CRC_ON_OFF			59
@@ -30,8 +33,8 @@
 #define CMD0				0
 #define CMD1				1
 #define CMD8				8
-#define CMD9				9
-#define CMD10				10
+#define CMD9				9		// CSD : card Specification Data
+#define CMD10				10		// CID : card identification data
 #define CMD12				12
 #define CMD16				16
 #define CMD17				17
@@ -40,8 +43,15 @@
 #define CMD24				24
 #define CMD25				25
 #define CMD41			    41
+#define CMD51			    51		// SCR : 
 #define CMD55				55
 #define CMD58				58
+
+
+#define cmdSDC_CSD()		Microsd_SendCmd( CMD9, 0x00000000 )
+#define cmdSDC_CID()		Microsd_SendCmd( CMD10, 0x00000000 )
+#define cmdSDC_STP_TRX()	Microsd_SendCmd( CMD12, 0x00000000 )
+#define cmdSDC_ACMD()		Microsd_SendCmd( CMD55, 0x00000000 )
 
 
 #define R1_IDLE_STATE		0x01
@@ -60,8 +70,40 @@ typedef struct {
 	unsigned char	Status;        // microSD status, use SD_STATUS_*_MASK
 } Microsd;
 
+struct card_info {
+    unsigned char      state;      	// State of card
+#define CARD_STATE_DET   (1<<0) 	// b'00000001' - Card detected
+#define CARD_STATE_INI   (1<<1) 	// b'00000010' - Card initialized
+    unsigned char      type;       	// high nybble - card type - low nybble - capacity
+#define CARD_TYPE_MM     (1<<5) 	// b'0010xxxx' - MM Card
+#define CARD_TYPE_SD     (1<<4) 	// b'0001xxxx' - SD Card
+#define CARD_TYPE_HC     (1<<0) 	// b'xxxx0001' - High Capacity card if bit set
+    unsigned char      version;    	// card version - based on card type
+#define CARD_VERSD_10    0x00;  	// SD card - 1.00-1.01
+#define CARD_VERSD_11    0x01;  	//         - 1.10
+#define CARD_VERSD_20    0x02   	//         - 2.00
+#define CARD_VERMM_10    0x00   	// MM card - 1.0-1.2
+#define CARD_VERMM_14    0x01   	//         - 1.4
+#define CARD_VERMM_20    0x02   	//         - 2.0-2.2
+#define CARD_VERMM_30    0x03   	//         - 3.1-3.3
+#define CARD_VERMM_40    0x04   	//         - 4.0-4.1
+    unsigned int       blocks;       	// Number of 512 byte blocks on card - use to calculate size
+    unsigned int       volt;		// Voltage range bits from OCR
+    unsigned char      manid;		// Manufacturer ID
+    unsigned char      appid[2];	// OEM/Application ID
+    unsigned char      name[6];		// Product Name
+    unsigned char      rev;		// Product Revision      
+    unsigned int       year;		// Product Date - year
+    unsigned char      month; 	 	// Product Date - month
+    unsigned int       serial;     // Product serial number - can use to detect card change
+    unsigned char 		speed;
+    unsigned char 		sector;
+};
+
+
 unsigned char init_sdc(void);
-inline unsigned char cek_sdc();
+//inline unsigned char cek_sdc();
+unsigned char cek_status_sdc(void);
 void SD_kirimCmd(unsigned char* cmd);
 unsigned char respon_SDcmd(unsigned char* rspn, int length);
 unsigned char cek_versi2_sdc();
@@ -69,5 +111,5 @@ unsigned char Microsd_SendCmd(unsigned char cmd_idx, unsigned int arg);
 unsigned char Microsd_crc7(unsigned char *MessBuff);
 unsigned short Microsd_crc16(unsigned char *MessBuff, unsigned int len);
 unsigned char SD_WriteCmd(unsigned char* cmd);
-
+unsigned char Microsd_SendCmd_nocrc(unsigned char cmd_idx, unsigned int arg);
 #endif
